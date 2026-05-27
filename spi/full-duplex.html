@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Full-Duplex SPI Simulator - ส่งและรับพร้อมกัน</title>
+    <link rel="stylesheet" href="css/base.css?v=1.0">
+    <link rel="stylesheet" href="css/full-duplex.css?v=1.0">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🔄 Full-Duplex SPI Simulator</h1>
+            <p>จำลองการส่งและรับข้อมูลพร้อมกัน (MOSI + MISO ทำงานพร้อมกันทุก Clock)</p>
+        </div>
+    </header>
+
+    <div class="full-duplex-page">
+        <a href="index.html" class="back-link">⬅️ กลับหน้า SPI Simulator</a>
+
+        <!-- Intro -->
+        <div class="page-intro">
+            <h2>📖 Full-Duplex คืออะไร?</h2>
+            <p>ใน SPI ทุกครั้งที่ Master สร้างสัญญาณ Clock (SCLK) <strong>ข้อมูลจะถูกส่งและรับพร้อมกัน</strong> ทั้ง 2 ทิศทาง:</p>
+            <p>• <strong style="color: #ea580c;">MOSI</strong> → Master ส่งข้อมูลไป Slave (ทุก clock cycle)</p>
+            <p>• <strong style="color: #16a34a;">MISO</strong> → Slave ส่งข้อมูลกลับ Master (ทุก clock cycle เดียวกัน)</p>
+            <p>เปรียบเทียบ: เหมือน<strong>คุยโทรศัพท์</strong> — ทั้งสองฝ่ายพูดและฟังได้พร้อมกัน ไม่ต้องรอกัน</p>
+            <div class="key-point">
+                🔑 Full-Duplex = ส่ง 1 bit + รับ 1 bit ในทุก Clock Cycle → 8 clocks = ส่งครบ 1 byte + รับครบ 1 byte พร้อมกัน
+            </div>
+        </div>
+
+        <!-- Duplex Diagram -->
+        <div class="duplex-diagram">
+            <h3>📊 การส่งข้อมูลแบบ Full-Duplex</h3>
+            <div class="duplex-visual">
+                <!-- Master Box -->
+                <div class="device-box master-box">
+                    <div class="device-name">🎮 Master</div>
+                    <div class="data-register">
+                        <label>TX Register (ส่ง)</label>
+                        <div class="reg-value" id="master-tx-reg">10100101</div>
+                    </div>
+                    <div class="data-register" style="margin-top: 0.5rem;">
+                        <label>RX Register (รับจาก Slave)</label>
+                        <div class="reg-value" id="master-rx-reg" style="color: #16a34a;">••••••••</div>
+                    </div>
+                </div>
+
+                <!-- Arrow Lines -->
+                <div class="arrow-lines">
+                    <div class="arrow-line mosi-arrow">
+                        <span class="arrow-label">MOSI</span>
+                        <div class="arrow-track">
+                            <div class="bit-dot" id="mosi-dot">0</div>
+                        </div>
+                        <span class="arrow-direction">→</span>
+                    </div>
+                    <div class="arrow-line miso-arrow">
+                        <span class="arrow-direction">←</span>
+                        <div class="arrow-track">
+                            <div class="bit-dot" id="miso-dot">0</div>
+                        </div>
+                        <span class="arrow-label">MISO</span>
+                    </div>
+                </div>
+
+                <!-- Slave Box -->
+                <div class="device-box slave-box">
+                    <div class="device-name">📟 Slave</div>
+                    <div class="data-register">
+                        <label>TX Register (ตอบกลับ)</label>
+                        <div class="reg-value" id="slave-tx-reg">00111100</div>
+                    </div>
+                    <div class="data-register" style="margin-top: 0.5rem;">
+                        <label>RX Register (รับจาก Master)</label>
+                        <div class="reg-value" id="slave-rx-reg" style="color: #ea580c;">••••••••</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bit-by-Bit Display -->
+        <div class="bit-display-panel">
+            <h3>📋 แสดงข้อมูลทีละ Bit (MSB First → Bit 7, 6, 5, 4, 3, 2, 1, 0)</h3>
+            <div class="bit-rows">
+                <div class="bit-row">
+                    <span class="bit-row-label mosi-label">MOSI →</span>
+                    <div class="bit-cells" id="mosi-bits"></div>
+                    <span class="clock-indicator">Master ส่ง</span>
+                </div>
+                <div class="bit-row">
+                    <span class="bit-row-label miso-label">MISO ←</span>
+                    <div class="bit-cells" id="miso-bits"></div>
+                    <span class="clock-indicator">Slave ตอบ</span>
+                </div>
+                <div class="bit-row">
+                    <span class="bit-row-label sclk-label">SCLK</span>
+                    <div class="bit-cells" id="clock-bits"></div>
+                    <span class="clock-indicator">สัญญาณนาฬิกา</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="duplex-controls">
+            <div class="controls-row">
+                <div class="control-group">
+                    <label>📤 Master ส่ง (0-255):</label>
+                    <input type="number" id="master-data-input" min="0" max="255" value="165" placeholder="0-255">
+                    <div class="binary-hint" id="master-binary">10100101</div>
+                </div>
+                <div class="control-group">
+                    <label>📥 Slave ตอบ (0-255):</label>
+                    <input type="number" id="slave-data-input" min="0" max="255" value="60" placeholder="0-255">
+                    <div class="binary-hint" id="slave-binary">00111100</div>
+                </div>
+                <div class="control-group">
+                    <label>ความเร็ว:</label>
+                    <select id="speed-select" style="padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;">
+                        <option value="1200">ช้า (ดูทีละ bit)</option>
+                        <option value="800" selected>ปกติ</option>
+                        <option value="400">เร็ว</option>
+                    </select>
+                </div>
+                <div class="control-buttons">
+                    <button id="btn-start" class="btn-primary">▶️ เริ่มส่ง</button>
+                    <button id="btn-step" class="btn-secondary">⏭️ ทีละ Clock</button>
+                    <button id="btn-reset" class="btn-secondary">🔄 รีเซ็ต</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary (hidden until complete) -->
+        <div class="duplex-summary">
+            <h3>📊 สรุปผลการสื่อสาร Full-Duplex</h3>
+            <div class="summary-grid">
+                <div class="summary-item mosi-summary">
+                    <div class="label">Master ส่ง → Slave</div>
+                    <div class="value" id="summary-master-sent">-</div>
+                </div>
+                <div class="summary-item miso-summary">
+                    <div class="label">Slave ได้รับ</div>
+                    <div class="value" id="summary-slave-received">-</div>
+                </div>
+                <div class="summary-item miso-summary">
+                    <div class="label">Slave ส่ง → Master</div>
+                    <div class="value" id="summary-slave-sent">-</div>
+                </div>
+                <div class="summary-item mosi-summary">
+                    <div class="label">Master ได้รับ</div>
+                    <div class="value" id="summary-master-received">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="duplex-log">
+            <h3>📋 บันทึกการทำงาน</h3>
+            <div class="log-content" id="log-content"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Full-Duplex SPI Simulator | Created for ปวส. Students</p>
+    </footer>
+
+    <script src="js/full-duplex.js?v=1.0"></script>
+</body>
+</html>
