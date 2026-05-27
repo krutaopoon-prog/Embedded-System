@@ -68,42 +68,74 @@
                 <!-- Signal Lines -->
                 <div class="signal-lines">
                     <svg id="multi-signal-svg" class="signal-lines-svg" viewBox="0 0 400 500">
-                        <!-- SCLK lines (shared - purple) -->
-                        <line class="sig-line sig-sclk" x1="10" y1="50" x2="250" y2="50" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-sclk" x1="250" y1="50" x2="390" y2="50" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-sclk" x1="250" y1="50" x2="250" y2="210" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-sclk" x1="250" y1="210" x2="390" y2="210" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-sclk" x1="250" y1="210" x2="250" y2="370" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-sclk" x1="250" y1="370" x2="390" y2="370" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- 
+                            Layout: Master pins on left, Slave pins on right
+                            Slave 1 center Y = 80, Slave 2 center Y = 250, Slave 3 center Y = 420
+                            Shared bus: vertical backbone at x=200 with horizontal branches
+                        -->
 
-                        <!-- MOSI lines (shared - blue) -->
-                        <line class="sig-line sig-mosi" x1="10" y1="100" x2="220" y2="100" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-mosi" x1="220" y1="100" x2="390" y2="75" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-mosi" x1="220" y1="100" x2="220" y2="235" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-mosi" x1="220" y1="235" x2="390" y2="235" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-mosi" x1="220" y1="235" x2="220" y2="395" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-mosi" x1="220" y1="395" x2="390" y2="395" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- ===== SCLK (Purple) - horizontal bus + vertical backbone + branches ===== -->
+                        <!-- Master SCLK out → backbone -->
+                        <line class="sig-line sig-sclk" x1="10" y1="40" x2="140" y2="40" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Backbone vertical -->
+                        <line class="sig-line sig-sclk" x1="140" y1="40" x2="140" y2="390" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Branch to Slave 1 -->
+                        <line class="sig-line sig-sclk" x1="140" y1="55" x2="390" y2="55" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Branch to Slave 2 -->
+                        <line class="sig-line sig-sclk" x1="140" y1="225" x2="390" y2="225" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Branch to Slave 3 -->
+                        <line class="sig-line sig-sclk" x1="140" y1="390" x2="390" y2="390" stroke="#8b5cf6" stroke-width="2.5" opacity="0.3"/>
 
-                        <!-- MISO lines (per slave - green) -->
-                        <line class="sig-line sig-miso-1" x1="390" y1="100" x2="190" y2="150" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-miso-1" x1="190" y1="150" x2="10" y2="150" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-miso-2" x1="390" y1="260" x2="190" y2="150" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
-                        <line class="sig-line sig-miso-3" x1="390" y1="420" x2="190" y2="150" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
+                        <!-- ===== MOSI (Blue) - horizontal bus + vertical backbone + branches ===== -->
+                        <!-- Master MOSI out → backbone -->
+                        <line class="sig-line sig-mosi" x1="10" y1="90" x2="180" y2="90" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Backbone vertical -->
+                        <line class="sig-line sig-mosi" x1="180" y1="80" x2="180" y2="420" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Branch to Slave 1 -->
+                        <line class="sig-line sig-mosi" x1="180" y1="80" x2="390" y2="80" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Branch to Slave 2 -->
+                        <line class="sig-line sig-mosi" x1="180" y1="250" x2="390" y2="250" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Branch to Slave 3 -->
+                        <line class="sig-line sig-mosi" x1="180" y1="420" x2="390" y2="420" stroke="#3b82f6" stroke-width="2.5" opacity="0.3"/>
 
-                        <!-- SS1 line (orange) -->
-                        <line class="sig-line sig-ss-1" x1="10" y1="200" x2="390" y2="125" stroke="#f97316" stroke-width="2.5" opacity="0.3"/>
-                        <!-- SS2 line (orange) -->
-                        <line class="sig-line sig-ss-2" x1="10" y1="250" x2="390" y2="285" stroke="#f97316" stroke-width="2.5" opacity="0.3"/>
-                        <!-- SS3 line (orange) -->
-                        <line class="sig-line sig-ss-3" x1="10" y1="300" x2="390" y2="445" stroke="#f97316" stroke-width="2.5" opacity="0.3"/>
+                        <!-- ===== MISO (Green) - each slave has own line back to Master ===== -->
+                        <!-- Backbone at x=220 -->
+                        <line class="sig-line sig-miso-1 sig-miso-2 sig-miso-3" x1="220" y1="105" x2="220" y2="445" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Master MISO in ← backbone -->
+                        <line class="sig-line sig-miso-1 sig-miso-2 sig-miso-3" x1="10" y1="140" x2="220" y2="140" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Slave 1 MISO → backbone -->
+                        <line class="sig-line sig-miso-1" x1="390" y1="105" x2="220" y2="105" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Slave 2 MISO → backbone -->
+                        <line class="sig-line sig-miso-2" x1="390" y1="275" x2="220" y2="275" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
+                        <!-- Slave 3 MISO → backbone -->
+                        <line class="sig-line sig-miso-3" x1="390" y1="445" x2="220" y2="445" stroke="#22c55e" stroke-width="2.5" opacity="0.3"/>
 
-                        <!-- Labels -->
-                        <text x="130" y="40" fill="#8b5cf6" font-size="11" font-weight="bold">SCLK</text>
-                        <text x="100" y="92" fill="#3b82f6" font-size="11" font-weight="bold">MOSI</text>
-                        <text x="80" y="143" fill="#22c55e" font-size="11" font-weight="bold">MISO</text>
-                        <text x="50" y="193" fill="#f97316" font-size="11" font-weight="bold">SS1</text>
-                        <text x="50" y="243" fill="#f97316" font-size="11" font-weight="bold">SS2</text>
-                        <text x="50" y="293" fill="#f97316" font-size="11" font-weight="bold">SS3</text>
+                        <!-- ===== SS Lines (Orange) - separate dedicated line per slave ===== -->
+                        <!-- SS1: Master → Slave 1 (straight horizontal) -->
+                        <line class="sig-line sig-ss-1" x1="10" y1="195" x2="390" y2="130" stroke="#f97316" stroke-width="2.5" opacity="0.3"/>
+                        <!-- SS2: Master → Slave 2 (straight horizontal) -->
+                        <line class="sig-line sig-ss-2" x1="10" y1="245" x2="390" y2="300" stroke="#f97316" stroke-width="2.5" opacity="0.3"/>
+                        <!-- SS3: Master → Slave 3 (straight horizontal) -->
+                        <line class="sig-line sig-ss-3" x1="10" y1="295" x2="390" y2="470" stroke="#f97316" stroke-width="2.5" opacity="0.3"/>
+
+                        <!-- ===== Labels ===== -->
+                        <text x="60" y="33" fill="#8b5cf6" font-size="11" font-weight="bold">SCLK</text>
+                        <text x="60" y="83" fill="#3b82f6" font-size="11" font-weight="bold">MOSI</text>
+                        <text x="60" y="133" fill="#22c55e" font-size="11" font-weight="bold">MISO</text>
+                        <text x="30" y="190" fill="#f97316" font-size="10" font-weight="bold">\SS1</text>
+                        <text x="30" y="240" fill="#f97316" font-size="10" font-weight="bold">\SS2</text>
+                        <text x="30" y="290" fill="#f97316" font-size="10" font-weight="bold">\SS3</text>
+
+                        <!-- Junction dots for shared lines -->
+                        <circle cx="140" cy="55" r="4" fill="#8b5cf6" opacity="0.5"/>
+                        <circle cx="140" cy="225" r="4" fill="#8b5cf6" opacity="0.5"/>
+                        <circle cx="140" cy="390" r="4" fill="#8b5cf6" opacity="0.5"/>
+                        <circle cx="180" cy="80" r="4" fill="#3b82f6" opacity="0.5"/>
+                        <circle cx="180" cy="250" r="4" fill="#3b82f6" opacity="0.5"/>
+                        <circle cx="180" cy="420" r="4" fill="#3b82f6" opacity="0.5"/>
+                        <circle cx="220" cy="105" r="4" fill="#22c55e" opacity="0.5"/>
+                        <circle cx="220" cy="275" r="4" fill="#22c55e" opacity="0.5"/>
+                        <circle cx="220" cy="445" r="4" fill="#22c55e" opacity="0.5"/>
                     </svg>
                 </div>
 

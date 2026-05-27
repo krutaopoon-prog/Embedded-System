@@ -135,6 +135,15 @@
     height: 500px;
 }
 
+.sig-line {
+    transition: opacity 0.4s ease;
+}
+
+.sig-line.active {
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 3px currentColor);
+}
+
 /* ===== Slave Devices ===== */
 .slaves-column {
     display: flex;
