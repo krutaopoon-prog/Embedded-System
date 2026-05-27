@@ -117,9 +117,8 @@ class SPIEngine {
      * @returns {boolean} true ถ้าการส่งเสร็จสมบูรณ์
      */
     step() {
-        if (!this.isRunning || this.isPaused) {
+        if (!this.isRunning) {
             this.start();
-            return false;
         }
 
         if (this.isComplete) {
