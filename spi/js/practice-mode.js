@@ -12,10 +12,6 @@ class PracticeMode {
         this.totalQuestions = 10;
         this.score = 0;
         this.answered = {};
-        this.matchingState = {
-            selectedItem: null,
-            matches: {}
-        };
 
         // UI Elements
         this.elements = {
@@ -43,7 +39,6 @@ class PracticeMode {
     init() {
         this.setupNameEntry();
         this.setupEventListeners();
-        this.setupMatchingGame();
     }
 
     /**
@@ -103,58 +98,6 @@ class PracticeMode {
         answerButtons.forEach(btn => {
             btn.addEventListener('click', (e) => this.handleAnswer(e.target));
         });
-    }
-
-    /**
-     * ตั้งค่า Matching Game (คำถามที่ 5)
-     */
-    setupMatchingGame() {
-        const matchItems = document.querySelectorAll('.match-item');
-        const matchTargets = document.querySelectorAll('.match-target');
-
-        matchItems.forEach(item => {
-            item.addEventListener('click', () => {
-                if (this.matchingState.matches[item.dataset.match]) return;
-                matchItems.forEach(i => i.classList.remove('selected'));
-                item.classList.add('selected');
-                this.matchingState.selectedItem = item.dataset.match;
-            });
-        });
-
-        matchTargets.forEach(target => {
-            target.addEventListener('click', () => {
-                if (!this.matchingState.selectedItem) return;
-                if (target.classList.contains('matched')) return;
-
-                const selected = this.matchingState.selectedItem;
-                const targetKey = target.dataset.target;
-
-                if (selected === targetKey) {
-                    target.classList.add('matched');
-                    document.querySelector(`.match-item[data-match="${selected}"]`).classList.add('matched');
-                    this.matchingState.matches[selected] = true;
-
-                    if (Object.keys(this.matchingState.matches).length === 3) {
-                        this.handleMatchingComplete();
-                    }
-                } else {
-                    target.style.animation = 'shake 0.5s';
-                    setTimeout(() => { target.style.animation = ''; }, 500);
-                }
-
-                matchItems.forEach(i => i.classList.remove('selected'));
-                this.matchingState.selectedItem = null;
-            });
-        });
-    }
-
-    handleMatchingComplete() {
-        if (!this.answered[5]) {
-            this.score++;
-            this.answered[5] = true;
-            this.updateScore();
-            this.showExplanation(5);
-        }
     }
 
     handleAnswer(button) {
@@ -284,7 +227,6 @@ class PracticeMode {
         this.currentQuestion = 1;
         this.score = 0;
         this.answered = {};
-        this.matchingState = { selectedItem: null, matches: {} };
 
         // รีเซ็ต UI
         document.querySelectorAll('.answer-btn').forEach(btn => {
@@ -294,10 +236,6 @@ class PracticeMode {
 
         document.querySelectorAll('.question-explanation').forEach(exp => {
             exp.classList.add('hidden');
-        });
-
-        document.querySelectorAll('.match-item, .match-target').forEach(el => {
-            el.classList.remove('matched', 'selected');
         });
 
         if (this.elements.quizComplete) this.elements.quizComplete.classList.add('hidden');
@@ -317,17 +255,6 @@ class PracticeMode {
 
     activate() {}
 }
-
-// CSS animation for shake effect
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-10px); }
-        75% { transform: translateX(10px); }
-    }
-`;
-document.head.appendChild(style);
 
 // Initialize when DOM is ready
 if (typeof document !== 'undefined') {
