@@ -105,6 +105,18 @@
             </div>
         </div>
 
+        <!-- Waveform / Oscilloscope -->
+        <div class="waveform-panel">
+            <h3>📊 กราฟสัญญาณ (Waveform)</h3>
+            <canvas id="waveform-canvas" width="700" height="280"></canvas>
+            <div class="waveform-legend">
+                <span class="legend-item"><span class="color-dot" style="background:#8b5cf6;"></span> SCLK</span>
+                <span class="legend-item"><span class="color-dot" style="background:#f97316;"></span> MOSI (Master→Slave)</span>
+                <span class="legend-item"><span class="color-dot" style="background:#22c55e;"></span> MISO (Slave→Master)</span>
+                <span class="legend-item"><span class="color-dot" style="background:#ef4444;"></span> SS (Active LOW)</span>
+            </div>
+        </div>
+
         <!-- Controls -->
         <div class="duplex-controls">
             <div class="controls-row">

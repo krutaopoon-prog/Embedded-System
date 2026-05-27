@@ -9,16 +9,27 @@ class FullDuplexSPI {
         this.animationTimer = null;
         this.speed = 800; // ms per clock cycle
 
+        // Waveform state
+        this.waveformCanvas = null;
+        this.waveformCtx = null;
+
         this.init();
     }
 
     init() {
         this.setupInputs();
         this.setupButtons();
+        this.setupWaveform();
         this.updateRegisters();
         this.renderBitCells();
+        this.drawWaveformIdle();
         this.addLog('🔌 Full-Duplex SPI Simulator พร้อมใช้งาน', 'info');
         this.addLog('💡 SPI ส่งและรับข้อมูลพร้อมกันทุก clock cycle', 'info');
+    }
+
+    setupWaveform() {
+        this.waveformCanvas = document.getElementById('waveform-canvas');
+        this.waveformCtx = this.waveformCanvas.getContext('2d');
     }
 
     setupInputs() {
@@ -155,6 +166,9 @@ class FullDuplexSPI {
 
         // Update received registers
         this.updateReceivedData(bit);
+
+        // Update waveform
+        this.drawWaveform(bit);
     }
 
     animateArrowDot(type, value, bit) {
@@ -205,6 +219,9 @@ class FullDuplexSPI {
         document.getElementById('summary-slave-sent').textContent = `0x${this.slaveTxData.toString(16).toUpperCase()} (${this.slaveTxData.toString(2).padStart(8, '0')})`;
         document.getElementById('summary-master-received').textContent = `0x${this.slaveTxData.toString(16).toUpperCase()} (${this.slaveTxData.toString(2).padStart(8, '0')})`;
 
+        // Final waveform (complete)
+        this.drawWaveform(7);
+
         this.addLog('✅ สื่อสารเสร็จสิ้น! ทั้ง Master และ Slave ได้รับข้อมูลครบ 8 บิตพร้อมกัน', 'info');
         this.addLog(`📊 Master ได้รับจาก Slave: 0x${this.slaveTxData.toString(16).toUpperCase()}`, 'miso');
         this.addLog(`📊 Slave ได้รับจาก Master: 0x${this.masterTxData.toString(16).toUpperCase()}`, 'mosi');
@@ -241,9 +258,227 @@ class FullDuplexSPI {
 
         this.renderBitCells();
 
+        // Reset waveform
+        this.drawWaveformIdle();
+
         // Clear log
         document.getElementById('log-content').innerHTML = '';
         this.addLog('🔄 รีเซ็ตแล้ว - พร้อมจำลองใหม่', 'info');
+    }
+
+    // ===== Waveform Drawing =====
+    drawWaveformIdle() {
+        const ctx = this.waveformCtx;
+        const w = this.waveformCanvas.width;
+        const h = this.waveformCanvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw labels and idle state
+        const signals = [
+            { name: 'SS', color: '#ef4444', y: 40, idle: 0 },    // HIGH when idle
+            { name: 'SCLK', color: '#8b5cf6', y: 110, idle: 0 }, // LOW idle (Mode 0)
+            { name: 'MOSI', color: '#f97316', y: 180, idle: 0 },
+            { name: 'MISO', color: '#22c55e', y: 250, idle: 0 }
+        ];
+
+        const labelWidth = 55;
+        const signalHeight = 40;
+
+        signals.forEach(sig => {
+            // Label
+            ctx.fillStyle = sig.color;
+            ctx.font = 'bold 12px Consolas, monospace';
+            ctx.fillText(sig.name, 5, sig.y + 4);
+
+            // Idle line (LOW)
+            ctx.strokeStyle = sig.color;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(labelWidth, sig.y);
+            ctx.lineTo(w - 10, sig.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        });
+
+        // Center text
+        ctx.fillStyle = '#475569';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('กด "เริ่มส่ง" เพื่อดูกราฟสัญญาณ', w / 2, h / 2);
+        ctx.textAlign = 'left';
+    }
+
+    drawWaveform(upToBit) {
+        const ctx = this.waveformCtx;
+        const w = this.waveformCanvas.width;
+        const h = this.waveformCanvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+
+        const masterBinary = this.masterTxData.toString(2).padStart(8, '0');
+        const slaveBinary = this.slaveTxData.toString(2).padStart(8, '0');
+
+        const labelWidth = 55;
+        const signalAreaWidth = w - labelWidth - 20;
+        const bitWidth = signalAreaWidth / 10; // 8 bits + start/end padding
+        const high = -30;
+        const low = 0;
+
+        const signals = [
+            { name: 'SS', color: '#ef4444', baseY: 50 },
+            { name: 'SCLK', color: '#8b5cf6', baseY: 120 },
+            { name: 'MOSI', color: '#f97316', baseY: 190 },
+            { name: 'MISO', color: '#22c55e', baseY: 260 }
+        ];
+
+        // Draw labels
+        signals.forEach(sig => {
+            ctx.fillStyle = sig.color;
+            ctx.font = 'bold 12px Consolas, monospace';
+            ctx.fillText(sig.name, 5, sig.baseY - 12);
+        });
+
+        // Draw bit number markers
+        ctx.fillStyle = '#475569';
+        ctx.font = '10px Consolas, monospace';
+        for (let i = 0; i < 8; i++) {
+            const x = labelWidth + bitWidth * (i + 1);
+            ctx.fillText(`B${i}`, x + bitWidth * 0.3, 15);
+        }
+
+        // Helper: draw signal
+        const drawSignal = (baseY, color, getBitValue, activeUpTo) => {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+
+            const startX = labelWidth;
+
+            // Initial idle (half bit before)
+            ctx.moveTo(startX, baseY + low);
+            ctx.lineTo(startX + bitWidth * 0.5, baseY + low);
+
+            for (let i = 0; i < 8; i++) {
+                const x = startX + bitWidth * (i + 0.5);
+                const val = (i <= activeUpTo) ? getBitValue(i) : null;
+
+                if (val !== null) {
+                    const level = val ? high : low;
+                    const prevLevel = (i === 0) ? low : (getBitValue(i - 1) ? high : low);
+
+                    // Transition
+                    if (i === 0 || level !== prevLevel) {
+                        ctx.lineTo(x, baseY + level);
+                    }
+                    ctx.lineTo(x + bitWidth, baseY + level);
+                } else {
+                    // Not yet reached - dashed idle
+                    ctx.lineTo(x, baseY + low);
+                    ctx.stroke();
+                    ctx.setLineDash([3, 3]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, baseY + low);
+                    ctx.lineTo(startX + bitWidth * 9, baseY + low);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    return;
+                }
+            }
+
+            // End idle
+            const endX = startX + bitWidth * 8.5;
+            ctx.lineTo(endX, baseY + low);
+            ctx.lineTo(startX + bitWidth * 9.5, baseY + low);
+            ctx.stroke();
+        };
+
+        // SS: LOW during entire transmission, HIGH before/after
+        drawSignal(signals[0].baseY, signals[0].color, (i) => {
+            return (i <= upToBit) ? 0 : 1; // 0 = LOW (active), shown as HIGH visually
+        }, upToBit);
+
+        // Actually SS should be inverted: HIGH level = idle, LOW = active
+        // Redraw SS properly
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        const ssBaseY = signals[0].baseY;
+        const ssStartX = labelWidth;
+        // Start HIGH
+        ctx.moveTo(ssStartX, ssBaseY + high);
+        ctx.lineTo(ssStartX + bitWidth * 0.5, ssBaseY + high);
+        // Drop to LOW
+        ctx.lineTo(ssStartX + bitWidth * 0.5, ssBaseY + low);
+        // Stay LOW during transmission
+        const ssEndBit = Math.min(upToBit + 1, 8);
+        ctx.lineTo(ssStartX + bitWidth * (ssEndBit + 0.5), ssBaseY + low);
+        if (upToBit >= 7) {
+            // Return HIGH after complete
+            ctx.lineTo(ssStartX + bitWidth * 8.5, ssBaseY + low);
+            ctx.lineTo(ssStartX + bitWidth * 8.5, ssBaseY + high);
+            ctx.lineTo(ssStartX + bitWidth * 9.5, ssBaseY + high);
+        }
+        ctx.stroke();
+
+        // SCLK: square wave (Mode 0: idle LOW, toggle each half-bit)
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        const sclkBaseY = signals[1].baseY;
+        ctx.moveTo(labelWidth, sclkBaseY + low);
+        ctx.lineTo(labelWidth + bitWidth * 0.5, sclkBaseY + low);
+        for (let i = 0; i <= upToBit && i < 8; i++) {
+            const x = labelWidth + bitWidth * (i + 0.5);
+            // Rising edge
+            ctx.lineTo(x, sclkBaseY + high);
+            ctx.lineTo(x + bitWidth * 0.5, sclkBaseY + high);
+            // Falling edge
+            ctx.lineTo(x + bitWidth * 0.5, sclkBaseY + low);
+            ctx.lineTo(x + bitWidth, sclkBaseY + low);
+        }
+        if (upToBit < 7) {
+            // Dashed remaining
+            const remainX = labelWidth + bitWidth * (upToBit + 1.5);
+            ctx.stroke();
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(remainX, sclkBaseY + low);
+            ctx.lineTo(labelWidth + bitWidth * 9.5, sclkBaseY + low);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        } else {
+            ctx.lineTo(labelWidth + bitWidth * 9.5, sclkBaseY + low);
+            ctx.stroke();
+        }
+
+        // MOSI: data bits from master
+        drawSignal(signals[2].baseY, signals[2].color, (i) => {
+            return parseInt(masterBinary[i]);
+        }, upToBit);
+
+        // MISO: data bits from slave
+        drawSignal(signals[3].baseY, signals[3].color, (i) => {
+            return parseInt(slaveBinary[i]);
+        }, upToBit);
+
+        // Draw current bit marker
+        if (upToBit >= 0 && upToBit < 8) {
+            const markerX = labelWidth + bitWidth * (upToBit + 1);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.moveTo(markerX, 20);
+            ctx.lineTo(markerX, h - 5);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
     }
 
     addLog(message, type) {
