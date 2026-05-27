@@ -337,7 +337,38 @@ Separate modes for different learning styles:
 
 ---
 
-## 📝 Adding New Skills
+## � Cache Control for GitHub Pages
+
+GitHub Pages caches files aggressively. Use these methods to prevent stale content:
+
+### Method 1: Meta Tags (HTML)
+Add to `<head>` in all HTML files:
+```html
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+```
+
+### Method 2: Version Query Strings
+Append version to CSS/JS files:
+```html
+<link rel="stylesheet" href="css/style.css?v=1.0">
+<script src="js/app.js?v=1.0"></script>
+```
+Update version number when files change: `?v=1.1`, `?v=1.2`, etc.
+
+### Method 3: Cache-Busting URL (Quick Fix)
+Add timestamp parameter for immediate refresh:
+```
+https://username.github.io/repo/?nocache=1
+```
+
+### Recommended Approach
+Use **Method 1 + Method 2** together for best results.
+
+---
+
+## �📝 Adding New Skills
 
 When adding new protocols, document new skills here:
 
