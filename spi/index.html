@@ -32,98 +32,225 @@
                     <button class="toggle-theory" id="toggle-theory">ซ่อน/แสดง</button>
                 </div>
                 <div class="theory-content" id="theory-content">
-                    <div class="theory-grid">
-                        <div class="theory-card">
-                            <h3>🔌 SPI คืออะไร?</h3>
-                            <p><strong>SPI (Serial Peripheral Interface)</strong> เป็นโปรโตคอลสื่อสารแบบ Synchronous Serial ที่ใช้สำหรับเชื่อมต่ออุปกรณ์ระยะใกล้ในระบบ Embedded System</p>
+                    <!-- Section 1: What is SPI -->
+                    <div class="theory-block">
+                        <h3>🔌 SPI คืออะไร?</h3>
+                        <p><strong>SPI (Serial Peripheral Interface)</strong> เป็นโปรโตคอลสื่อสารแบบ <strong>Synchronous Serial</strong> ที่ใช้สำหรับเชื่อมต่ออุปกรณ์ระยะใกล้ในระบบ Embedded System</p>
+                        
+                        <div class="term-box">
+                            <h4>📘 คำศัพท์ที่ต้องรู้</h4>
                             <ul>
-                                <li>พัฒนาโดย Motorola ในปี 1970s</li>
-                                <li>สื่อสารแบบ <strong>Full-Duplex</strong> (ส่งและรับพร้อมกัน)</li>
-                                <li>ใช้สายสัญญาณ 4 เส้น (แบบ 4-wire)</li>
-                                <li>รองรับความเร็วสูง (หลาย MHz)</li>
+                                <li><strong>Synchronous</strong> = สื่อสารแบบมีสัญญาณนาฬิกาควบคุมจังหวะ (ต้องมี SCLK)</li>
+                                <li><strong>Serial</strong> = ส่งข้อมูลทีละบิต ต่อเนื่องกันเป็นสาย (ไม่ใช่แบบ Parallel ที่ส่งพร้อมกันหลายบิต)</li>
+                                <li><strong>Full-Duplex</strong> = ส่งและรับข้อมูลพร้อมกันได้ในเวลาเดียวกัน (เหมือนโทรศัพท์)</li>
                             </ul>
                         </div>
                         
-                        <div class="theory-card">
-                            <h3>📡 สายสัญญาณ 4 เส้น</h3>
-                            <table class="signal-table">
-                                <tr>
-                                    <th>สัญญาณ</th>
-                                    <th>ทิศทาง</th>
-                                    <th>หน้าที่</th>
-                                </tr>
-                                <tr>
-                                    <td><strong>MOSI</strong></td>
-                                    <td>Master → Slave</td>
-                                    <td>ส่งข้อมูลจาก Master ไป Slave</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>MISO</strong></td>
-                                    <td>Slave → Master</td>
-                                    <td>ส่งข้อมูลจาก Slave กลับ Master</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>SCLK</strong></td>
-                                    <td>Master → Slave</td>
-                                    <td>สัญญาณนาฬิกาสำหรับซิงค์</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>SS (CS)</strong></td>
-                                    <td>Master → Slave</td>
-                                    <td>เลือก Slave ที่จะสื่อสาร (Active LOW)</td>
-                                </tr>
-                            </table>
+                        <p>ลักษณะเด่นของ SPI:</p>
+                        <ul>
+                            <li>พัฒนาโดย <strong>Motorola</strong> ในปี 1970s</li>
+                            <li>สื่อสารแบบ Full-Duplex (ส่งและรับพร้อมกัน)</li>
+                            <li>ใช้สายสัญญาณ 4 เส้น (แบบ 4-wire)</li>
+                            <li>รองรับความเร็วสูง (หลาย MHz)</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Section 2: Master & Slave -->
+                    <div class="theory-block">
+                        <h3>🎮 Master และ 📟 Slave คืออะไร?</h3>
+                        <p>SPI ใช้โครงสร้างแบบ <strong>Master-Slave</strong> คือมีอุปกรณ์หนึ่งควบคุมการสื่อสาร (Master) และอุปกรณ์อื่นรอรับคำสั่ง (Slave)</p>
+                        
+                        <div class="term-box">
+                            <h4>📘 ความหมายของ Master และ Slave</h4>
+                            <p><strong>🎮 Master (เจ้านาย)</strong></p>
+                            <ul>
+                                <li>อุปกรณ์ที่<strong>ควบคุม</strong>การสื่อสารทั้งหมด</li>
+                                <li>เป็นฝ่าย<strong>สร้างสัญญาณนาฬิกา (SCLK)</strong></li>
+                                <li>ตัดสินใจ<strong>เมื่อไหร่</strong>จะส่ง/รับข้อมูล</li>
+                                <li>เลือกว่าจะคุยกับ Slave ตัวไหน (ผ่านสัญญาณ SS)</li>
+                                <li>ตัวอย่าง: Arduino, Raspberry Pi, STM32</li>
+                            </ul>
+                            
+                            <p><strong>📟 Slave (ผู้รับใช้)</strong></p>
+                            <ul>
+                                <li>อุปกรณ์ที่<strong>รอรับคำสั่ง</strong>จาก Master</li>
+                                <li>ไม่มีสิทธิ์สร้างสัญญาณนาฬิกา</li>
+                                <li>ตอบสนองต่อ Master เท่านั้นเมื่อถูกเลือก (SS = LOW)</li>
+                                <li>ตัวอย่าง: Sensor (เซนเซอร์), EEPROM, Display</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 3: 4 Signal Lines -->
+                    <div class="theory-block">
+                        <h3>📡 สายสัญญาณ 4 เส้น คืออะไร?</h3>
+                        <p>SPI ใช้สายสัญญาณ 4 เส้น แต่ละเส้นมีชื่อและหน้าที่เฉพาะเจาะจง</p>
+                        
+                        <div class="signal-detail">
+                            <h4>🟢 MOSI - Master Out Slave In</h4>
+                            <ul>
+                                <li><strong>Master Out Slave In</strong> = ข้อมูลออกจาก Master เข้าไปใน Slave</li>
+                                <li><strong>ทิศทาง:</strong> จาก Master → ไปยัง Slave (ขาเดียว)</li>
+                                <li><strong>หน้าที่:</strong> Master ใช้สายนี้ <strong>ส่งข้อมูล</strong> ไปให้ Slave</li>
+                                <li><strong>คิดง่ายๆ:</strong> สายส่งข้อมูลจากเจ้านายไปลูกน้อง</li>
+                            </ul>
                         </div>
                         
-                        <div class="theory-card">
-                            <h3>⚙️ SPI Modes (CPOL & CPHA)</h3>
-                            <p>SPI มี 4 Modes ตามการตั้งค่า Clock Polarity (CPOL) และ Clock Phase (CPHA):</p>
-                            <table class="mode-table">
-                                <tr>
-                                    <th>Mode</th>
-                                    <th>CPOL</th>
-                                    <th>CPHA</th>
-                                    <th>คำอธิบาย</th>
-                                </tr>
-                                <tr>
-                                    <td>0</td>
-                                    <td>0</td>
-                                    <td>0</td>
-                                    <td>เริ่ม LOW, อ่านที่ rising edge</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>0</td>
-                                    <td>1</td>
-                                    <td>เริ่ม LOW, อ่านที่ falling edge</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>1</td>
-                                    <td>0</td>
-                                    <td>เริ่ม HIGH, อ่านที่ falling edge</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>1</td>
-                                    <td>1</td>
-                                    <td>เริ่ม HIGH, อ่านที่ rising edge</td>
-                                </tr>
-                            </table>
-                            <p class="note">💡 <strong>Simulator นี้รองรับ Mode 0 และ 3</strong> (ทั้งคู่ sample ที่ rising edge)</p>
+                        <div class="signal-detail">
+                            <h4>🔵 MISO - Master In Slave Out</h4>
+                            <ul>
+                                <li><strong>Master In Slave Out</strong> = ข้อมูลเข้า Master ออกจาก Slave</li>
+                                <li><strong>ทิศทาง:</strong> จาก Slave → กลับไป Master (ขาเดียว)</li>
+                                <li><strong>หน้าที่:</strong> Slave ใช้สายนี้ <strong>ส่งข้อมูลกลับ</strong> ไปให้ Master</li>
+                                <li><strong>คิดง่ายๆ:</strong> สายส่งข้อมูลจากลูกน้องกลับไปหาเจ้านาย</li>
+                            </ul>
                         </div>
                         
-                        <div class="theory-card">
-                            <h3>🔄 การส่งข้อมูล (Data Transfer)</h3>
-                            <ol>
-                                <li><strong>Master ส่งสัญญาณ SS = LOW</strong> เพื่อเลือก Slave</li>
-                                <li><strong>ส่งข้อมูลบิตต่อบิต</strong> แบบ MSB-first (บิตสูงสุดก่อน)</li>
-                                <li><strong>ทุก clock cycle</strong> ส่งและรับพร้อมกัน 1 บิต</li>
-                                <li><strong>ครบ 8 cycles</strong> = ส่งข้อมูล 1 byte เสร็จสมบูรณ์</li>
-                                <li><strong>Master ส่ง SS = HIGH</strong> เพื่อจบการสื่อสาร</li>
-                            </ol>
-                            <p class="highlight">⚡ 1 byte = 8 bits = 8 clock cycles</p>
+                        <div class="signal-detail">
+                            <h4>🟣 SCLK - Serial Clock</h4>
+                            <ul>
+                                <li><strong>Serial Clock</strong> = สัญญาณนาฬิกาสำหรับซิงโครไนซ์</li>
+                                <li><strong>ทิศทาง:</strong> จาก Master → ไปยัง Slave</li>
+                                <li><strong>หน้าที่:</strong> เป็น<strong>จังหวะจะโคน</strong>บอก Slave ว่าเมื่อไหร่ควรอ่านข้อมูล</li>
+                                <li><strong>คิดง่ายๆ:</strong> คือจังหวะเพลงที่ Master นำขึ้นมาบรรเลง ทุกคนต้องตามจังหวะนี้</li>
+                                <li><strong>ความถี่:</strong> ยิ่งเร็ว = ส่งข้อมูลเร็ว (วัดเป็นหน่วย Hz เช่น 1 MHz, 8 MHz)</li>
+                            </ul>
                         </div>
+                        
+                        <div class="signal-detail">
+                            <h4>🔴 SS (CS) - Slave Select / Chip Select</h4>
+                            <ul>
+                                <li><strong>Slave Select</strong> หรือ <strong>Chip Select</strong> = เลือก Slave ที่จะคุยด้วย</li>
+                                <li><strong>ทิศทาง:</strong> จาก Master → ไปยัง Slave</li>
+                                <li><strong>หน้าที่:</strong> Master ใช้เลือกว่าจะคุยกับ Slave ตัวไหน</li>
+                                <li><strong>Active LOW:</strong> เมื่อ SS = LOW (0V) = เลือก Slave นี้, SS = HIGH (3.3V/5V) = ไม่เลือก</li>
+                                <li><strong>คิดง่ายๆ:</strong> เหมือนการตะโกนชื่อคน ถ้าเรียกชื่อคนไหน คนนั้นถึงจะตอบ</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 4: Rising Edge & Clock -->
+                    <div class="theory-block">
+                        <h3>⏱️ Rising Edge และ Falling Edge คืออะไร?</h3>
+                        <p>สัญญาณนาฬิกา (SCLK) เป็น<strong>คลื่นสี่เหลี่ยม</strong>ที่สลับระหว่าง HIGH และ LOW การเปลี่ยนระดับนี้เรียกว่า "Edge"</p>
+                        
+                        <div class="term-box">
+                            <h4>📘 คำอธิบาย Edge</h4>
+                            <p><strong>⬆️ Rising Edge (ขาขึ้น)</strong></p>
+                            <ul>
+                                <li>สัญญาณเปลี่ยนจาก <strong>LOW → HIGH</strong> (0 → 1)</li>
+                                <li>เหมือนขึ้นบันไดจากพื้นขึ้นไปชั้นบน</li>
+                                <li>ใน SPI Mode 0 และ 3: อ่านข้อมูลที่ Rising Edge</li>
+                            </ul>
+                            
+                            <p><strong>⬇️ Falling Edge (ขาลง)</strong></p>
+                            <ul>
+                                <li>สัญญาณเปลี่ยนจาก <strong>HIGH → LOW</strong> (1 → 0)</li>
+                                <li>เหมือนเดินลงบันไดจากชั้นบนลงมาพื้น</li>
+                                <li>ใน SPI Mode 1 และ 2: อ่านข้อมูลที่ Falling Edge</li>
+                            </ul>
+                        </div>
+                        
+                        <p class="highlight">💡 <strong>ทำไมต้องมี Edge?</strong> การอ่านข้อมูลที่ Edge ช่วยให้อ่านตรงจังหวะที่สัญญาณคงที่ ไม่ใช่ตอนที่กำลังเปลี่ยน (ซึ่งอาจอ่านค่าผิด)</p>
+                    </div>
+                    
+                    <!-- Section 5: SPI Modes -->
+                    <div class="theory-block">
+                        <h3>⚙️ SPI Modes (CPOL & CPHA) คืออะไร?</h3>
+                        <p>SPI มี 4 Modes ตามการตั้งค่าสองตัว: <strong>CPOL</strong> (Clock Polarity) และ <strong>CPHA</strong> (Clock Phase)</p>
+                        
+                        <div class="term-box">
+                            <h4>📘 ความหมาย CPOL และ CPHA</h4>
+                            <p><strong>CPOL - Clock Polarity (ความถูกต้องของนาฬิกา)</strong></p>
+                            <ul>
+                                <li>กำหนดว่าสัญญาณนาฬิกาเริ่มต้นที่ระดับไหน</li>
+                                <li><strong>CPOL = 0:</strong> เริ่มที่ LOW (0V) เมื่อไม่ส่งข้อมูล</li>
+                                <li><strong>CPOL = 1:</strong> เริ่มที่ HIGH (3.3V/5V) เมื่อไม่ส่งข้อมูล</li>
+                            </ul>
+                            
+                            <p><strong>CPHA - Clock Phase (เฟสของนาฬิกา)</strong></p>
+                            <ul>
+                                <li>กำหนดว่าอ่านข้อมูลที่ Edge ไหน</li>
+                                <li><strong>CPHA = 0:</strong> อ่านที่ Rising Edge, เปลี่ยนข้อมูลที่ Falling Edge</li>
+                                <li><strong>CPHA = 1:</strong> อ่านที่ Falling Edge, เปลี่ยนข้อมูลที่ Rising Edge</li>
+                            </ul>
+                        </div>
+                        
+                        <table class="mode-table">
+                            <tr>
+                                <th>Mode</th>
+                                <th>CPOL</th>
+                                <th>CPHA</th>
+                                <th>เริ่มต้น</th>
+                                <th>อ่านข้อมูลที่</th>
+                            </tr>
+                            <tr>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>LOW</td>
+                                <td>Rising Edge</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>LOW</td>
+                                <td>Falling Edge</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>HIGH</td>
+                                <td>Falling Edge</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>HIGH</td>
+                                <td>Rising Edge</td>
+                            </tr>
+                        </table>
+                        
+                        <p class="note">💡 <strong>Simulator นี้รองรับ Mode 0 และ 3</strong> เพราะทั้งสอง Mode อ่านข้อมูลที่ Rising Edge (ใช้งานง่ายที่สุด)</p>
+                    </div>
+                    
+                    <!-- Section 6: Data Transfer Process -->
+                    <div class="theory-block">
+                        <h3>🔄 ขั้นตอนการส่งข้อมูล (Data Transfer)</h3>
+                        <p>การส่งข้อมูล 1 byte (8 bits) ใน SPI ทำตามขั้นตอนนี้:</p>
+                        
+                        <ol class="process-list">
+                            <li>
+                                <strong>Master ส่ง SS = LOW</strong> (เลือก Slave)
+                                <p>บอก Slave ว่า "เดี๋ยวจะคุยกับนายนะ" - Slave ที่ถูกเลือกจะเริ่มตั้งตัวรอ</p>
+                            </li>
+                            <li>
+                                <strong>เริ่มส่งสัญญาณนาฬิกา (SCLK)</strong>
+                                <p>Master เริ่มสร้างคลื่นสี่เหลี่ยมที่ SCLK เป็นลูกๆ ต่อเนื่อง</p>
+                            </li>
+                            <li>
+                                <strong>ส่งข้อมูลบิตต่อบิต (MSB-first)</strong>
+                                <p>เริ่มจากบิตที่มีค่ามากที่สุด (Most Significant Bit) ไปหาน้อยที่สุด</p>
+                                <p>ตัวอย่าง: ส่ง 0xAA (10101010) จะส่ง 1→0→1→0→1→0→1→0</p>
+                            </li>
+                            <li>
+                                <strong>ทุก clock cycle: ส่งและรับพร้อมกัน</strong>
+                                <p>ที่ Rising Edge: Master อ่าน MISO + Slave อ่าน MOSI พร้อมกัน</p>
+                                <p>นี่แหละคือ Full-Duplex - ส่งและรับพร้อมกัน!</p>
+                            </li>
+                            <li>
+                                <strong>ครบ 8 cycles = จบ 1 byte</strong>
+                                <p>ส่งข้อมูลครบ 8 บิตแล้ว หยุดสัญญาณนาฬิกา</p>
+                            </li>
+                            <li>
+                                <strong>Master ส่ง SS = HIGH</strong> (ปล่อย Slave)</n                                <p>บอก Slave ว่า "คุยเสร็จแล้ว นายไปได้" - จบการสื่อสาร</p>
+                            </li>
+                        </ol>
+                        
+                        <p class="highlight">⚡ สรุป: 1 byte = 8 bits = 8 clock cycles = ส่งและรับพร้อมกัน 8 ครั้ง</p>
                     </div>
                     
                     <div class="references">
