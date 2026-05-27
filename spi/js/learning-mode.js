@@ -113,13 +113,30 @@ class LearningMode {
         const toggleBtn = document.getElementById('toggle-theory');
         const theoryContent = document.getElementById('theory-content');
         
+        console.log('Setting up theory toggle:', toggleBtn, theoryContent);
+        
         if (toggleBtn && theoryContent) {
-            toggleBtn.addEventListener('click', () => {
-                theoryContent.classList.toggle('collapsed');
-                toggleBtn.textContent = theoryContent.classList.contains('collapsed') 
-                    ? 'แสดงเนื้อหา' 
-                    : 'ซ่อนเนื้อหา';
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('Toggle button clicked');
+                
+                const isCollapsed = theoryContent.classList.contains('collapsed');
+                
+                if (isCollapsed) {
+                    theoryContent.classList.remove('collapsed');
+                    toggleBtn.textContent = 'ซ่อนเนื้อหา';
+                } else {
+                    theoryContent.classList.add('collapsed');
+                    toggleBtn.textContent = 'แสดงเนื้อหา';
+                }
+                
+                console.log('Theory content collapsed:', !isCollapsed);
             });
+            console.log('Theory toggle setup complete');
+        } else {
+            console.error('Theory toggle elements not found:', {toggleBtn, theoryContent});
         }
     }
 
