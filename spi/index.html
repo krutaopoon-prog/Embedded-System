@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPI Simulator - จำลองการทำงาน SPI Protocol</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🔌 SPI Simulator</h1>
+            <p>เครื่องมือจำลองการทำงาน SPI Protocol สำหรับนักเรียน ปวส.</p>
+        </div>
+        <div class="mode-switcher">
+            <button id="btn-learning" class="mode-btn active">โหมดเรียนรู้</button>
+            <button id="btn-practice" class="mode-btn">โหมดทดสอบ</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Learning Mode -->
+        <section id="learning-mode" class="mode-section active">
+            <div class="main-container">
+                <!-- Visualization Area -->
+                <div class="visualization-panel">
+                    <div class="connection-diagram">
+                        <div class="device master">
+                            <div class="device-header">🎮 Master</div>
+                            <div class="device-pins">
+                                <div class="pin" id="master-mosi">MOSI</div>
+                                <div class="pin" id="master-miso">MISO</div>
+                                <div class="pin" id="master-sclk">SCLK</div>
+                                <div class="pin" id="master-ss">SS</div>
+                            </div>
+                        </div>
+                        
+                        <div class="signal-lines">
+                            <svg id="signal-svg" viewBox="0 0 400 300">
+                                <!-- MOSI Line -->
+                                <line id="mosi-line" class="signal-line" x1="50" y1="50" x2="350" y2="50"/>
+                                <text x="200" y="40" class="signal-label">MOSI</text>
+                                
+                                <!-- MISO Line -->
+                                <line id="miso-line" class="signal-line" x1="350" y1="100" x2="50" y2="100"/>
+                                <text x="200" y="90" class="signal-label">MISO</text>
+                                
+                                <!-- SCLK Line -->
+                                <line id="sclk-line" class="signal-line clock" x1="50" y1="150" x2="350" y2="150"/>
+                                <text x="200" y="140" class="signal-label">SCLK</text>
+                                
+                                <!-- SS Line -->
+                                <line id="ss-line" class="signal-line select" x1="50" y1="200" x2="350" y2="200"/>
+                                <text x="200" y="190" class="signal-label">SS</text>
+                            </svg>
+                        </div>
+                        
+                        <div class="device slave">
+                            <div class="device-header">📟 Slave</div>
+                            <div class="device-pins">
+                                <div class="pin" id="slave-mosi">MOSI</div>
+                                <div class="pin" id="slave-miso">MISO</div>
+                                <div class="pin" id="slave-sclk">SCLK</div>
+                                <div class="pin" id="slave-ss">SS</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Oscilloscope Panel -->
+                    <div class="oscilloscope-panel">
+                        <div class="panel-header">📊 Oscilloscope View</div>
+                        <canvas id="scope-canvas" width="600" height="200"></canvas>
+                        <div class="scope-legend">
+                            <div class="legend-item"><span class="color-box mosi"></span> MOSI</div>
+                            <div class="legend-item"><span class="color-box miso"></span> MISO</div>
+                            <div class="legend-item"><span class="color-box sclk"></span> SCLK</div>
+                            <div class="legend-item"><span class="color-box ss"></span> SS</div>
+                        </div>
+                    </div>
+
+                    <!-- Data Display -->
+                    <div class="data-display">
+                        <div class="data-section master-data">
+                            <h4>📤 Master ส่ง (MOSI)</h4>
+                            <div class="byte-display" id="master-tx">0 0 0 0 0 0 0 0</div>
+                            <div class="current-bit" id="mosi-bit">Current: -</div>
+                        </div>
+                        <div class="data-section slave-data">
+                            <h4>📥 Master รับ (MISO)</h4>
+                            <div class="byte-display" id="master-rx">0 0 0 0 0 0 0 0</div>
+                            <div class="current-bit" id="miso-bit">Current: -</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Panel -->
+                <div class="control-panel">
+                    <div class="panel-header">⚙️ ควบคุมการทำงาน</div>
+                    
+                    <div class="control-group">
+                        <label>ข้อมูลที่จะส่ง (1 Byte, 0-255):</label>
+                        <input type="number" id="data-input" min="0" max="255" value="170" placeholder="0-255">
+                        <div class="binary-preview">Binary: <span id="binary-display">10101010</span></div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>SPI Mode:</label>
+                        <select id="spi-mode">
+                            <option value="0">Mode 0 (CPOL=0, CPHA=0)</option>
+                            <option value="3">Mode 3 (CPOL=1, CPHA=1)</option>
+                        </select>
+                        <div class="mode-explanation" id="mode-exp">
+                            CPOL=0: นาฬิกาเริ่มต้นที่ LOW<br>
+                            CPHA=0: อ่านข้อมูลที่ rising edge
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>ความเร็ว:</label>
+                        <input type="range" id="speed-slider" min="1" max="10" value="5">
+                        <div class="speed-labels"><span>ช้า</span><span>เร็ว</span></div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button id="btn-play" class="btn-primary">▶️ เริ่ม</button>
+                        <button id="btn-pause" class="btn-secondary" disabled>⏸️ หยุดชั่วคราว</button>
+                        <button id="btn-step" class="btn-secondary">⏭️ ทีละขั้น</button>
+                        <button id="btn-reset" class="btn-secondary">🔄 เริ่มใหม่</button>
+                    </div>
+                </div>
+
+                <!-- Explanation Panel -->
+                <div class="explanation-panel">
+                    <div class="panel-header">📚 คำอธิบาย</div>
+                    <div class="explanation-content" id="explanation">
+                        <p>👋 ยินดีต้อนรับสู่ SPI Simulator!</p>
+                        <p>SPI (Serial Peripheral Interface) เป็นโปรโตคอลสื่อสารแบบ Serial ที่ใช้กันอย่างแพร่หลายในระบบ Embedded</p>
+                        <p>🔹 กด "เริ่ม" เพื่อดูการทำงานจำลอง</p>
+                        <p>🔹 ลองเปลี่ยนข้อมูลหรือ SPI Mode ดูสิ!</p>
+                    </div>
+                    <div class="progress-indicator" id="progress">
+                        <div class="step" data-step="0">เริ่มต้น</div>
+                        <div class="step" data-step="1">เลือก Slave</div>
+                        <div class="step" data-step="2">ส่งข้อมูล</div>
+                        <div class="step" data-step="3">จบการส่ง</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Examples -->
+            <div class="code-examples">
+                <div class="panel-header">💻 ตัวอย่างโค้ด Arduino</div>
+                <div class="code-tabs">
+                    <button class="code-tab active" data-tab="master">Master Code</button>
+                    <button class="code-tab" data-tab="slave">Slave Code</button>
+                </div>
+                <div class="code-content active" id="master-code">
+                    <pre><code>#include &lt;SPI.h&gt;
+
+void setup() {
+  SPI.begin();
+  pinMode(SS, OUTPUT);
+  digitalWrite(SS, HIGH);
+}
+
+void loop() {
+  digitalWrite(SS, LOW);  // เลือก Slave
+  SPI.transfer(0xAA);     // ส่งข้อมูล 0xAA
+  digitalWrite(SS, HIGH); // ปล่อย Slave
+  delay(1000);
+}</code></pre>
+                </div>
+                <div class="code-content" id="slave-code">
+                    <pre><code>#include &lt;SPI.h&gt;
+
+volatile byte received;
+
+void setup() {
+  pinMode(MISO, OUTPUT);
+  SPCR |= _BV(SPE);
+  SPI.attachInterrupt();
+  Serial.begin(9600);
+}
+
+ISR(SPI_STC_vect) {
+  received = SPDR;
+  Serial.println(received, HEX);
+}
+
+void loop() {
+  // Slave ทำงานอัตโนมัติผ่าน interrupt
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Mode -->
+        <section id="practice-mode" class="mode-section">
+            <div class="practice-container">
+                <div class="quiz-header">
+                    <h2>📝 แบบทดสอบความเข้าใจ SPI</h2>
+                    <div class="score-display">คะแนน: <span id="score">0</span>/10</div>
+                </div>
+
+                <div class="quiz-content" id="quiz-content">
+                    <!-- Quiz Question 1 -->
+                    <div class="quiz-question active" data-question="1">
+                        <div class="question-text">
+                            <h3>คำถามที่ 1: สายสัญญาณใดเป็นสายข้อมูลจาก Master ไป Slave?</h3>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="true">MOSI</button>
+                            <button class="answer-btn" data-correct="false">MISO</button>
+                            <button class="answer-btn" data-correct="false">SCLK</button>
+                            <button class="answer-btn" data-correct="false">SS</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ <strong>MOSI</strong> ย่อมาจาก Master Out Slave In - เป็นสายข้อมูลที่ Master ส่งไปยัง Slave
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 2 -->
+                    <div class="quiz-question" data-question="2">
+                        <div class="question-text">
+                            <h3>คำถามที่ 2: สายสัญญาณใดใช้สำหรับเลือกอุปกรณ์ Slave ที่จะสื่อสาร?</h3>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="false">MOSI</button>
+                            <button class="answer-btn" data-correct="false">MISO</button>
+                            <button class="answer-btn" data-correct="false">SCLK</button>
+                            <button class="answer-btn" data-correct="true">SS (Slave Select)</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ <strong>SS (Slave Select)</strong> หรือ CS (Chip Select) ใช้สำหรับเลือก Slave ที่ Master ต้องการสื่อสารด้วย (Active LOW)
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 3 -->
+                    <div class="quiz-question" data-question="3">
+                        <div class="question-text">
+                            <h3>คำถามที่ 3: การสื่อสาร SPI เป็นแบบใด?</h3>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="false">Half-Duplex (ส่งหรือรับทีละอย่าง)</button>
+                            <button class="answer-btn" data-correct="true">Full-Duplex (ส่งและรับพร้อมกัน)</button>
+                            <button class="answer-btn" data-correct="false">Simplex (ส่งอย่างเดียว)</button>
+                            <button class="answer-btn" data-correct="false">Multi-Duplex (หลายอุปกรณ์พร้อมกัน)</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ SPI เป็น <strong>Full-Duplex</strong> - สามารถส่งข้อมูลผ่าน MOSI และรับข้อมูลผ่าน MISO พร้อมกันในแต่ละ clock cycle
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 4 - Matching -->
+                    <div class="quiz-question" data-question="4">
+                        <div class="question-text">
+                            <h3>คำถามที่ 4: จับคู่สายสัญญาณกับหน้าที่ให้ถูกต้อง</h3>
+                        </div>
+                        <div class="matching-game">
+                            <div class="matching-column">
+                                <div class="match-item" data-match="sclk">SCLK</div>
+                                <div class="match-item" data-match="mosi">MOSI</div>
+                                <div class="match-item" data-match="miso">MISO</div>
+                            </div>
+                            <div class="matching-column">
+                                <div class="match-target" data-target="mosi">ส่งข้อมูล Master→Slave</div>
+                                <div class="match-target" data-target="sclk">สัญญาณนาฬิกา</div>
+                                <div class="match-target" data-target="miso">รับข้อมูล Slave→Master</div>
+                            </div>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ SCLK = นาฬิกา, MOSI = Master ส่งให้ Slave, MISO = Master รับจาก Slave
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 5 - Mode Selection -->
+                    <div class="quiz-question" data-question="5">
+                        <div class="question-text">
+                            <h3>คำถามที่ 5: ถ้าต้องการให้ SCLK เริ่มต้นที่ LOW และอ่านข้อมูลที่ rising edge ควรใช้โหมดใด?</h3>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="true">Mode 0 (CPOL=0, CPHA=0)</button>
+                            <button class="answer-btn" data-correct="false">Mode 1 (CPOL=0, CPHA=1)</button>
+                            <button class="answer-btn" data-correct="false">Mode 2 (CPOL=1, CPHA=0)</button>
+                            <button class="answer-btn" data-correct="false">Mode 3 (CPOL=1, CPHA=1)</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ <strong>Mode 0</strong>: CPOL=0 (SCLK เริ่ม LOW), CPHA=0 (อ่านที่ rising edge)
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 6 - Waveform -->
+                    <div class="quiz-question" data-question="6">
+                        <div class="question-text">
+                            <h3>คำถามที่ 6: จาก waveform นี้ ข้อมูลที่ส่งคือค่าใด? (LSB first)</h3>
+                            <div class="waveform-quiz">
+                                <div class="waveform-row">
+                                    <span class="wf-label">SCLK:</span>
+                                    <span class="wf-bits">⎽⎽⎺⎺⎽⎽⎺⎺⎽⎽⎺⎺⎽⎽⎺⎺</span>
+                                </div>
+                                <div class="waveform-row">
+                                    <span class="wf-label">MOSI:</span>
+                                    <span class="wf-bits">⎽⎽⎽⎽⎺⎺⎺⎺⎽⎽⎽⎽⎺⎺⎺⎺</span>
+                                </div>
+                                <div class="bit-indices">0  1  2  3  4  5  6  7</div>
+                            </div>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="false">0x0F (00001111)</button>
+                            <button class="answer-btn" data-correct="true">0x33 (00110011)</button>
+                            <button class="answer-btn" data-correct="false">0xCC (11001100)</button>
+                            <button class="answer-btn" data-correct="false">0xF0 (11110000)</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ ข้อมูลที่ rising edge: บิต 0=0, 1=0, 2=1, 3=1, 4=0, 5=0, 6=1, 7=1 = 00110011 (0x33)
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 7 - Timing -->
+                    <div class="quiz-question" data-question="7">
+                        <div class="question-text">
+                            <h3>คำถามที่ 7: สัญญาณ SS ต้องเป็นอย่างไรก่อนเริ่มส่งข้อมูล?</h3>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="false">HIGH</button>
+                            <button class="answer-btn" data-correct="true">LOW</button>
+                            <button class="answer-btn" data-correct="false">Toggle (สลับ)</button>
+                            <button class="answer-btn" data-correct="false">ไม่สนใจค่า SS</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ SS เป็น <strong>Active LOW</strong> - ต้องเป็น LOW เพื่อเลือก Slave ที่ต้องการสื่อสาร
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 8 - Data Rate -->
+                    <div class="quiz-question" data-question="8">
+                        <div class="question-text">
+                            <h3>คำถามที่ 8: ถ้า SCLK ความถี่ 1 MHz จะใช้เวลาส่ง 1 byte นานเท่าใด?</h3>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="false">1 ไมโครวินาที</button>
+                            <button class="answer-btn" data-correct="true">8 ไมโครวินาที</button>
+                            <button class="answer-btn" data-correct="false">1 มิลลิวินาที</button>
+                            <button class="answer-btn" data-correct="false">8 มิลลิวินาที</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ 1 byte = 8 bits, 1 MHz = 1 bit/ไมโครวินาที ดังนั้น 8 bits = 8 ไมโครวินาที
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 9 - Multiple Slaves -->
+                    <div class="quiz-question" data-question="9">
+                        <div class="question-text">
+                            <h3>คำถามที่ 9: ถ้ามีหลาย Slave ต้องใช้สายสัญญาณเพิ่มอะไร?</h3>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="false">MOSI เพิ่มอีกเส้น</button>
+                            <button class="answer-btn" data-correct="true">SS/CS แยกสำหรับแต่ละ Slave</button>
+                            <button class="answer-btn" data-correct="false">SCLK เพิ่มอีกเส้น</button>
+                            <button class="answer-btn" data-correct="false">ไม่ต้องเพิ่มสายสัญญาณ</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ ต้องมี <strong>SS/CS แยกสำหรับแต่ละ Slave</strong> แต่ MOSI, MISO, SCLK ใช้ร่วมกันได้
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question 10 - Complete -->
+                    <div class="quiz-question" data-question="10">
+                        <div class="question-text">
+                            <h3>คำถามที่ 10: ข้อใดเป็นข้อดีของ SPI เมื่อเทียบกับ I2C?</h3>
+                        </div>
+                        <div class="answer-options">
+                            <button class="answer-btn" data-correct="false">ใช้สายสัญญาณน้อยกว่า</button>
+                            <button class="answer-btn" data-correct="true">ความเร็วสูงกว่า และ Full-Duplex</button>
+                            <button class="answer-btn" data-correct="false">รองรับอุปกรณ์ได้มากกว่า</button>
+                            <button class="answer-btn" data-correct="false">ไม่ต้องกำหนด Address</button>
+                        </div>
+                        <div class="question-explanation hidden">
+                            ✅ SPI เร็วกว่าและเป็น Full-Duplex แต่ใช้สายมากกว่า I2C
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-navigation">
+                    <button id="prev-question" class="btn-secondary" disabled>⬅️ ข้อก่อนหน้า</button>
+                    <span id="question-number">คำถาม 1/10</span>
+                    <button id="next-question" class="btn-secondary" disabled>ข้อถัดไป ➡️</button>
+                </div>
+
+                <div class="quiz-complete hidden" id="quiz-complete">
+                    <div class="trophy">🏆</div>
+                    <h2>ยินดีด้วย! ทำแบบทดสอบเสร็จแล้ว</h2>
+                    <p>คะแนนของคุณ: <span id="final-score">0</span>/10</p>
+                    <button id="restart-quiz" class="btn-primary">🔄 เริ่มใหม่</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>SPI Simulator for Vocational Education | Created for ปวส. Students</p>
+    </footer>
+
+    <script src="js/spi-engine.js"></script>
+    <script src="js/animation.js"></script>
+    <script src="js/learning-mode.js"></script>
+    <script src="js/practice-mode.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
