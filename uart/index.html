@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>UART Simulator - จำลองการทำงาน UART Protocol</title>
+    <link rel="stylesheet" href="css/base.css?v=1.0">
+    <link rel="stylesheet" href="css/theory.css?v=1.0">
+    <link rel="stylesheet" href="css/simulator.css?v=1.0">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🔗 UART Simulator</h1>
+            <p>จำลองการทำงานของ Universal Asynchronous Receiver-Transmitter สำหรับนักเรียน ปวส.</p>
+            <div class="mode-switcher">
+                <button class="mode-btn active" data-mode="learning-mode">📚 โหมดเรียนรู้</button>
+                <button class="mode-btn" data-mode="practice-mode">📝 โหมดทดสอบ</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Theory Section -->
+        <div class="theory-section">
+            <div class="theory-header">
+                <h2>📖 ทฤษฎีก่อนใช้ Simulator</h2>
+                <button class="toggle-theory" id="toggle-theory" onclick="toggleTheory()">ซ่อนเนื้อหา</button>
+            </div>
+            <div class="theory-content" id="theory-content">
+                <!-- Section 1: UART คืออะไร -->
+                <div class="theory-block">
+                    <h3>📡 Section 1: UART คืออะไร?</h3>
+                    <div class="term-box">
+                        <h4>📘 UART - Universal Asynchronous Receiver-Transmitter</h4>
+                        <ul>
+                            <li><strong>ความหมาย:</strong> วงจรสื่อสารข้อมูลแบบอนุกรม (Serial) ที่ส่งข้อมูลโดย<strong>ไม่ต้องมีสัญญาณนาฬิการ่วม</strong></li>
+                            <li><strong>เปรียบเทียบง่ายๆ:</strong> เหมือนส่งจดหมาย — ทั้งสองฝ่ายต้องตกลงกันล่วงหน้าว่าจะอ่านเร็วแค่ไหน (Baud Rate)</li>
+                            <li><strong>ตัวอย่างการใช้งาน:</strong> Arduino Serial Monitor, GPS Module, Bluetooth HC-05, ESP8266</li>
+                        </ul>
+                    </div>
+                    <p><strong>Asynchronous</strong> (อะซิงโครนัส) หมายความว่า ไม่มีสาย Clock แยกมาให้ ดังนั้นทั้ง 2 ฝ่ายต้องตั้ง <strong>Baud Rate ให้ตรงกัน</strong> จึงจะสื่อสารกันได้</p>
+                    <p class="highlight">💡 <strong>SPI vs UART:</strong> SPI ใช้สาย SCLK ส่งจังหวะ (Synchronous) แต่ UART ไม่มี — ทั้งสองฝ่ายต้อง "นัดเวลา" กันเอง</p>
+                </div>
+
+                <!-- Section 2: สายสัญญาณ UART -->
+                <div class="theory-block">
+                    <h3>🔌 Section 2: สายสัญญาณ UART (2 เส้นหลัก)</h3>
+                    <p>UART ใช้สายน้อยมาก — แค่ <strong>2 เส้น</strong> ก็สื่อสารได้ (ไม่นับ GND)</p>
+
+                    <div class="signal-detail">
+                        <h4>🟠 TX - Transmit (สายส่งข้อมูล)</h4>
+                        <ul>
+                            <li><strong>ทิศทาง:</strong> ออกจากตัวเอง → เข้าอีกฝ่าย</li>
+                            <li><strong>เปรียบเทียบ:</strong> เหมือน "ปาก" ที่ใช้พูดส่งข้อความออกไป</li>
+                            <li><strong>การต่อ:</strong> TX ของอุปกรณ์ A → ต่อกับ RX ของอุปกรณ์ B</li>
+                        </ul>
+                    </div>
+
+                    <div class="signal-detail">
+                        <h4>🔵 RX - Receive (สายรับข้อมูล)</h4>
+                        <ul>
+                            <li><strong>ทิศทาง:</strong> รับข้อมูลจากอีกฝ่ายเข้ามา</li>
+                            <li><strong>เปรียบเทียบ:</strong> เหมือน "หู" ที่ใช้ฟังข้อความที่ส่งมา</li>
+                            <li><strong>การต่อ:</strong> RX ของอุปกรณ์ A → ต่อกับ TX ของอุปกรณ์ B</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight">⚠️ <strong>สำคัญ:</strong> ต้อง<strong>ไขว้สาย</strong> (Cross-over) — TX ต่อ RX เสมอ! ถ้าต่อ TX-TX จะไม่ทำงาน</p>
+                </div>
+
+                <!-- Section 3: Baud Rate -->
+                <div class="theory-block">
+                    <h3>⏱️ Section 3: Baud Rate คืออะไร?</h3>
+                    <div class="term-box">
+                        <h4>📘 Baud Rate</h4>
+                        <ul>
+                            <li><strong>ความหมาย:</strong> ความเร็วในการส่งข้อมูล หน่วยเป็น bits per second (bps)</li>
+                            <li><strong>เปรียบเทียบ:</strong> เหมือนความเร็วในการพูด — ถ้าคนพูดเร็วไม่เท่ากับคนฟัง ก็จะฟังไม่เข้าใจ</li>
+                            <li><strong>ค่าที่ใช้บ่อย:</strong> 9600, 115200 bps</li>
+                        </ul>
+                    </div>
+
+                    <table class="mode-table">
+                        <thead>
+                            <tr>
+                                <th>Baud Rate</th>
+                                <th>ความเร็ว</th>
+                                <th>ใช้งานบ่อยกับ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>9600</td><td>ช้า แต่เสถียร</td><td>GPS, Sensor ทั่วไป</td></tr>
+                            <tr><td>19200</td><td>ปานกลาง</td><td>อุปกรณ์อุตสาหกรรม</td></tr>
+                            <tr><td>115200</td><td>เร็ว</td><td>Arduino Serial Monitor, ESP</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p class="highlight">⚡ <strong>กฎสำคัญ:</strong> ทั้ง 2 ฝ่ายต้องตั้ง Baud Rate ให้<strong>ตรงกัน</strong> ถ้าไม่ตรง → ข้อมูลที่รับจะเป็น "ขยะ" (Garbage Data)</p>
+                </div>
+
+                <!-- Section 4: โครงสร้าง Data Frame -->
+                <div class="theory-block">
+                    <h3>📦 Section 4: โครงสร้าง Data Frame (UART Packet)</h3>
+                    <p>UART ส่งข้อมูลเป็น "กรอบ" (Frame) ทีละ 1 ตัวอักษร โดยมีโครงสร้างดังนี้:</p>
+
+                    <table class="mode-table">
+                        <thead>
+                            <tr>
+                                <th>ส่วน</th>
+                                <th>จำนวนบิต</th>
+                                <th>หน้าที่</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Start Bit</strong></td><td>1 bit</td><td>บอกว่า "เริ่มส่งแล้วนะ" (LOW)</td></tr>
+                            <tr><td><strong>Data Bits</strong></td><td>5-9 bits (ปกติ 8)</td><td>ข้อมูลจริงๆ ที่ต้องการส่ง</td></tr>
+                            <tr><td><strong>Parity Bit</strong></td><td>0-1 bit (ไม่บังคับ)</td><td>ตรวจสอบความถูกต้อง</td></tr>
+                            <tr><td><strong>Stop Bit</strong></td><td>1-2 bits</td><td>บอกว่า "ส่งเสร็จแล้ว" (HIGH)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="term-box">
+                        <h4>📘 อธิบายแต่ละส่วน</h4>
+                        <ul>
+                            <li><strong>Start Bit:</strong> สายที่ปกติเป็น HIGH จะดึงลง LOW 1 บิต — เหมือนกดกริ่งบอกว่า "มีข้อมูลมา!"</li>
+                            <li><strong>Data Bits:</strong> ข้อมูลจริง ส่ง LSB ก่อน (บิตค่าน้อยสุดก่อน)</li>
+                            <li><strong>Parity Bit:</strong> ตรวจสอบว่าข้อมูลถูกต้องไหม (Even/Odd) — ไม่บังคับใช้</li>
+                            <li><strong>Stop Bit:</strong> ดึงสายกลับ HIGH — เหมือนจบประโยค บอกว่า "พูดจบแล้ว"</li>
+                        </ul>
+                    </div>
+
+                    <p class="note">📝 <strong>ตัวอย่าง:</strong> ส่งตัว 'A' (ASCII 65 = 01000001) → Frame = [Start:0] [Data:1-0-0-0-0-0-1-0] [Stop:1] — ส่ง LSB first!</p>
+                </div>
+
+                <!-- Section 5: Idle State & Logic Level -->
+                <div class="theory-block">
+                    <h3>🔋 Section 5: Idle State และ Logic Level</h3>
+                    <p>เมื่อ UART <strong>ไม่ได้ส่งข้อมูล</strong> สายจะคงสถานะ <strong>HIGH</strong> (Logic 1) เรียกว่า <strong>Idle State</strong></p>
+
+                    <div class="term-box">
+                        <h4>📘 Logic Level</h4>
+                        <ul>
+                            <li><strong>Idle (ว่าง):</strong> สาย = HIGH (1) — ปกติไม่มีอะไรเกิดขึ้น</li>
+                            <li><strong>Start Bit:</strong> สายดึงลง LOW (0) — "เตรียมรับข้อมูล!"</li>
+                            <li><strong>Stop Bit:</strong> สายกลับ HIGH (1) — "ส่งเสร็จแล้ว กลับปกติ"</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight">💡 เพราะ Idle = HIGH ดังนั้น Start Bit จะเปลี่ยนจาก HIGH→LOW (Falling Edge) ทำให้ฝั่งรับรู้ว่า "มีข้อมูลกำลังมา"</p>
+                </div>
+
+                <!-- Section 6: การสื่อสารแบบ Full-Duplex -->
+                <div class="theory-block">
+                    <h3>🔄 Section 6: UART เป็น Full-Duplex</h3>
+                    <p>เนื่องจาก UART มีสาย <strong>TX</strong> และ <strong>RX</strong> แยกกัน จึงสามารถ<strong>ส่งและรับข้อมูลพร้อมกัน</strong>ได้</p>
+
+                    <div class="term-box">
+                        <h4>📘 รูปแบบการสื่อสาร</h4>
+                        <ul>
+                            <li><strong>Full-Duplex:</strong> ส่งและรับพร้อมกัน (TX+RX แยกคนละสาย) — เหมือนคุยโทรศัพท์</li>
+                            <li><strong>Point-to-Point:</strong> UART เชื่อมต่อได้แค่ 2 อุปกรณ์ (1 ต่อ 1)</li>
+                            <li><strong>ไม่มี Master/Slave:</strong> ทั้งสองฝ่ายเท่าเทียม สามารถส่งข้อมูลเมื่อไหร่ก็ได้</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight">⚡ <strong>UART vs SPI:</strong> SPI มี Master ควบคุมทั้งหมด + เชื่อมได้หลาย Slave แต่ UART เป็นแบบ 1 ต่อ 1 ไม่มีใครเป็นเจ้านาย</p>
+                </div>
+
+                <!-- Section 7: ขั้นตอนการส่งข้อมูล -->
+                <div class="theory-block">
+                    <h3>📤 Section 7: ขั้นตอนการส่งข้อมูล UART</h3>
+                    <ol class="process-list">
+                        <li>
+                            <strong>สายอยู่ในสถานะ Idle (HIGH)</strong>
+                            <p>ทั้ง TX และ RX ค้างที่ HIGH — ยังไม่มีการส่งข้อมูล</p>
+                        </li>
+                        <li>
+                            <strong>ส่ง Start Bit (ดึงสาย LOW)</strong>
+                            <p>ฝ่ายส่งดึง TX ลง LOW 1 บิต — บอกอีกฝ่ายว่า "ข้อมูลกำลังมา!"</p>
+                        </li>
+                        <li>
+                            <strong>ส่ง Data Bits (LSB first)</strong>
+                            <p>ส่งข้อมูล 8 บิตทีละบิต เริ่มจากบิตค่าน้อยสุด (LSB) ก่อน</p>
+                        </li>
+                        <li>
+                            <strong>ส่ง Parity Bit (ถ้าตั้งค่าไว้)</strong>
+                            <p>ส่งบิตตรวจสอบ — Even Parity: นับ 1 ให้เป็นเลขคู่, Odd: เลขคี่</p>
+                        </li>
+                        <li>
+                            <strong>ส่ง Stop Bit (ดึงสาย HIGH)</strong>
+                            <p>ดึง TX กลับ HIGH 1-2 บิต — บอกว่า "ส่ง 1 frame เสร็จแล้ว"</p>
+                        </li>
+                    </ol>
+
+                    <p class="highlight">⏱️ <strong>เวลาทั้งหมด:</strong> ที่ Baud Rate 9600 → 1 bit ≈ 104μs → 1 frame (10 bits) ≈ 1.04ms</p>
+                </div>
+
+                <div class="references">
+                    <h4>📚 แหล่งอ้างอิง</h4>
+                    <ul>
+                        <li><a href="https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html" target="_blank">Analog Devices - UART: A Hardware Communication Protocol</a></li>
+                        <li><a href="https://www.sparkfun.com/serial-communication" target="_blank">SparkFun - Serial Communication</a></li>
+                        <li><a href="https://docs.arduino.cc/learn/communication/uart/" target="_blank">Arduino - UART Documentation</a></li>
+                        <li>Texas Instruments - UART Technical Reference Manual</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Mode -->
+        <section id="learning-mode" class="mode-section active">
+            <div class="simulator-container">
+                <h2>🎮 จำลองการส่งข้อมูล UART</h2>
+
+                <!-- UART Diagram -->
+                <div class="uart-diagram">
+                    <div class="device-box" id="device-a">
+                        <div class="device-icon">💻</div>
+                        <h3>Device A</h3>
+                        <div class="pin-list">
+                            <span>TX → ส่งออก</span>
+                            <span>RX ← รับเข้า</span>
+                        </div>
+                    </div>
+
+                    <div class="signal-lines">
+                        <div class="signal-line">
+                            <span style="color: #f97316;">TX</span>
+                            <div class="line tx"></div>
+                            <span class="arrow">→</span>
+                            <span style="color: #3b82f6;">RX</span>
+                        </div>
+                        <div class="signal-line">
+                            <span style="color: #3b82f6;">RX</span>
+                            <span class="arrow">←</span>
+                            <div class="line rx"></div>
+                            <span style="color: #f97316;">TX</span>
+                        </div>
+                        <div class="signal-line">
+                            <span>GND</span>
+                            <div class="line" style="background: #64748b;"></div>
+                            <span>GND</span>
+                        </div>
+                    </div>
+
+                    <div class="device-box" id="device-b">
+                        <div class="device-icon">📟</div>
+                        <h3>Device B</h3>
+                        <div class="pin-list">
+                            <span>TX → ส่งออก</span>
+                            <span>RX ← รับเข้า</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Waveform -->
+                <div class="waveform-panel">
+                    <h3>📊 สัญญาณ UART (Waveform)</h3>
+                    <canvas id="uart-waveform" width="800" height="200"></canvas>
+                    <div class="waveform-legend">
+                        <div class="legend-item"><span class="color-dot" style="background: #f97316;"></span> TX Data</div>
+                        <div class="legend-item"><span class="color-dot" style="background: #22c55e;"></span> Start Bit</div>
+                        <div class="legend-item"><span class="color-dot" style="background: #ef4444;"></span> Stop Bit</div>
+                    </div>
+                </div>
+
+                <!-- Bit Display -->
+                <div class="data-display">
+                    <div class="data-panel">
+                        <h4>📤 ข้อมูลที่ส่ง (TX)</h4>
+                        <div class="data-value" id="tx-data">-</div>
+                        <div class="bit-display" id="tx-bits"></div>
+                        <div class="bit-label" id="tx-labels"></div>
+                    </div>
+                    <div class="data-panel">
+                        <h4>📥 ข้อมูลที่รับ (RX)</h4>
+                        <div class="data-value" id="rx-data">-</div>
+                        <div class="bit-display" id="rx-bits"></div>
+                        <div class="bit-label" id="rx-labels"></div>
+                    </div>
+                </div>
+
+                <!-- Control Panel -->
+                <div class="control-panel">
+                    <h3>🎛️ แผงควบคุม</h3>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>ข้อมูลที่จะส่ง (ASCII)</label>
+                            <input type="text" id="input-data" value="A" maxlength="1" style="width: 60px; text-align: center;">
+                        </div>
+                        <div class="control-group">
+                            <label>Baud Rate</label>
+                            <select id="baud-rate">
+                                <option value="9600" selected>9600</option>
+                                <option value="19200">19200</option>
+                                <option value="115200">115200</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Parity</label>
+                            <select id="parity">
+                                <option value="none" selected>None</option>
+                                <option value="even">Even</option>
+                                <option value="odd">Odd</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Stop Bits</label>
+                            <select id="stop-bits">
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="btn-primary" id="btn-send">📤 ส่งข้อมูล</button>
+                        <button class="btn-primary" id="btn-step">⏭️ ทีละบิต</button>
+                        <button class="btn-secondary" id="btn-reset">🔄 รีเซ็ต</button>
+                    </div>
+                </div>
+
+                <!-- Explanation -->
+                <div class="explanation-panel">
+                    <h3>💡 คำอธิบาย</h3>
+                    <div class="explanation-content" id="explanation">
+                        <p>กรอกตัวอักษรที่ต้องการส่ง แล้วกด <strong>"ส่งข้อมูล"</strong> เพื่อดูการส่งข้อมูลแบบอัตโนมัติ หรือกด <strong>"ทีละบิต"</strong> เพื่อดูทีละขั้นตอน</p>
+                        <p>สังเกตว่า UART จะส่ง Start Bit (LOW) ก่อน → Data 8 bits (LSB first) → Stop Bit (HIGH)</p>
+                    </div>
+                </div>
+
+                <!-- Log -->
+                <div class="log-panel">
+                    <h3>📋 บันทึกการทำงาน</h3>
+                    <div class="log-content" id="log-content">
+                        <div class="log-entry">[Ready] UART Simulator พร้อมใช้งาน</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Mode -->
+        <section id="practice-mode" class="mode-section">
+            <div class="practice-container">
+
+                <!-- Name Entry Screen -->
+                <div class="name-entry" id="name-entry">
+                    <div class="name-entry-card">
+                        <div class="name-entry-icon">📝</div>
+                        <h2>แบบทดสอบความเข้าใจ UART Protocol</h2>
+                        <p>ทดสอบความรู้จากเนื้อหาทฤษฎีที่เรียนมา (10 ข้อ)</p>
+                        <div class="name-input-group">
+                            <label for="student-name">กรอกชื่อ-นามสกุล:</label>
+                            <input type="text" id="student-name" placeholder="เช่น สมชาย ใจดี" maxlength="50" autocomplete="off">
+                        </div>
+                        <button id="btn-start-quiz" class="btn-primary btn-large" disabled>เริ่มทำแบบทดสอบ →</button>
+                        <p class="name-hint">* กรุณากรอกชื่อก่อนเริ่มทำแบบทดสอบ</p>
+                    </div>
+                </div>
+
+                <!-- Quiz Area -->
+                <div class="quiz-area hidden" id="quiz-area">
+                    <div class="quiz-header">
+                        <h2>📝 แบบทดสอบความเข้าใจ UART</h2>
+                        <div class="quiz-header-info">
+                            <span class="student-name-display" id="student-name-display"></span>
+                            <div class="score-display">คะแนน: <span id="score">0</span>/10</div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-content" id="quiz-content">
+                        <!-- Q1 -->
+                        <div class="quiz-question active" data-question="1">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: UART คืออะไร?</span>
+                                <h3>คำถามที่ 1: UART เป็นการสื่อสารแบบใด?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">Synchronous Serial (มีสัญญาณ Clock)</button>
+                                <button class="answer-btn" data-correct="true">Asynchronous Serial (ไม่มีสัญญาณ Clock)</button>
+                                <button class="answer-btn" data-correct="false">Parallel Communication (ส่งหลายบิตพร้อมกัน)</button>
+                                <button class="answer-btn" data-correct="false">Wireless Communication (ไร้สาย)</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ UART เป็น <strong>Asynchronous Serial</strong> — ไม่มีสาย Clock ร่วม ทั้งสองฝ่ายต้องตั้ง Baud Rate ให้ตรงกันเพื่อกำหนดจังหวะเอง
+                            </div>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div class="quiz-question" data-question="2">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: สายสัญญาณ</span>
+                                <h3>คำถามที่ 2: การต่อสาย UART ระหว่าง 2 อุปกรณ์ ต้องต่ออย่างไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">TX ต่อ TX, RX ต่อ RX (ตรงๆ)</button>
+                                <button class="answer-btn" data-correct="true">TX ต่อ RX, RX ต่อ TX (ไขว้)</button>
+                                <button class="answer-btn" data-correct="false">ต่อรวมกันเป็นสายเดียว</button>
+                                <button class="answer-btn" data-correct="false">ต่อผ่านสาย Clock</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ ต้อง<strong>ไขว้สาย</strong> — TX (ปาก) ของฝ่ายหนึ่งต่อเข้า RX (หู) ของอีกฝ่าย เหมือนคนพูดต้องเข้าหูคนฟัง
+                            </div>
+                        </div>
+
+                        <!-- Q3 -->
+                        <div class="quiz-question" data-question="3">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Baud Rate</span>
+                                <h3>คำถามที่ 3: ถ้า Device A ตั้ง Baud Rate 9600 แต่ Device B ตั้ง 115200 จะเกิดอะไรขึ้น?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">สื่อสารได้ปกติ ระบบจะปรับให้อัตโนมัติ</button>
+                                <button class="answer-btn" data-correct="false">ส่งได้แต่ช้าลง</button>
+                                <button class="answer-btn" data-correct="true">รับข้อมูลผิดพลาด (Garbage Data)</button>
+                                <button class="answer-btn" data-correct="false">อุปกรณ์จะเสียหาย</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ Baud Rate ไม่ตรงกัน → ข้อมูลจะ<strong>ผิดพลาด</strong>เป็น Garbage Data เพราะฝ่ายรับอ่านจังหวะผิด (เหมือนคนพูดเร็วแต่อีกฝ่ายฟังช้า)
+                            </div>
+                        </div>
+
+                        <!-- Q4 -->
+                        <div class="quiz-question" data-question="4">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Data Frame</span>
+                                <h3>คำถามที่ 4: Start Bit ใน UART มีค่าเป็นอะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">HIGH (Logic 1)</button>
+                                <button class="answer-btn" data-correct="true">LOW (Logic 0)</button>
+                                <button class="answer-btn" data-correct="false">ขึ้นอยู่กับข้อมูลที่จะส่ง</button>
+                                <button class="answer-btn" data-correct="false">สลับ HIGH-LOW</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ Start Bit = <strong>LOW (0)</strong> เสมอ — เพราะสายปกติเป็น HIGH (Idle) การดึงลง LOW จะบอกฝ่ายรับว่า "ข้อมูลกำลังมา!"
+                            </div>
+                        </div>
+
+                        <!-- Q5 -->
+                        <div class="quiz-question" data-question="5">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Data Frame</span>
+                                <h3>คำถามที่ 5: UART ส่งข้อมูลเรียงลำดับอย่างไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">MSB first (บิตค่ามากสุดก่อน)</button>
+                                <button class="answer-btn" data-correct="true">LSB first (บิตค่าน้อยสุดก่อน)</button>
+                                <button class="answer-btn" data-correct="false">ส่งทุกบิตพร้อมกัน</button>
+                                <button class="answer-btn" data-correct="false">สุ่มลำดับ</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ UART ส่ง <strong>LSB first</strong> (Least Significant Bit ก่อน) — บิตที่มีค่าน้อยที่สุดจะถูกส่งออกไปก่อน
+                            </div>
+                        </div>
+
+                        <!-- Q6 -->
+                        <div class="quiz-question" data-question="6">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Idle State</span>
+                                <h3>คำถามที่ 6: เมื่อ UART ไม่ได้ส่งข้อมูล (Idle) สายจะอยู่ในสถานะอะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">LOW (0)</button>
+                                <button class="answer-btn" data-correct="true">HIGH (1)</button>
+                                <button class="answer-btn" data-correct="false">ลอยตัว (Hi-Z)</button>
+                                <button class="answer-btn" data-correct="false">สลับ HIGH-LOW ตลอดเวลา</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ UART Idle State = <strong>HIGH (1)</strong> — สายค้างที่ HIGH ตลอดเวลาที่ไม่มีการส่งข้อมูล พอจะเริ่มส่ง จึงดึงลง LOW (Start Bit)
+                            </div>
+                        </div>
+
+                        <!-- Q7 -->
+                        <div class="quiz-question" data-question="7">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Full-Duplex</span>
+                                <h3>คำถามที่ 7: UART สามารถส่งและรับข้อมูลพร้อมกันได้ เพราะอะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">เพราะใช้ความเร็วสูงมาก</button>
+                                <button class="answer-btn" data-correct="false">เพราะมีบัฟเฟอร์ขนาดใหญ่</button>
+                                <button class="answer-btn" data-correct="true">เพราะมีสาย TX และ RX แยกกันคนละเส้น</button>
+                                <button class="answer-btn" data-correct="false">เพราะมี Master คอยควบคุม</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ UART เป็น <strong>Full-Duplex</strong> เพราะมี<strong>สาย TX กับ RX แยกกัน</strong> — ส่งข้อมูลผ่าน TX ขณะเดียวกันก็รับจาก RX ได้เลย
+                            </div>
+                        </div>
+
+                        <!-- Q8 -->
+                        <div class="quiz-question" data-question="8">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Data Frame</span>
+                                <h3>คำถามที่ 8: Stop Bit มีค่าเป็นอะไรและทำหน้าที่อะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">LOW — บอกว่าเริ่มส่งข้อมูลใหม่</button>
+                                <button class="answer-btn" data-correct="true">HIGH — บอกว่าส่ง 1 frame เสร็จแล้ว</button>
+                                <button class="answer-btn" data-correct="false">สลับ — ตรวจสอบความถูกต้อง</button>
+                                <button class="answer-btn" data-correct="false">ไม่มีค่า — เป็นแค่ช่วงหน่วง</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ Stop Bit = <strong>HIGH (1)</strong> — ดึงสายกลับ HIGH เพื่อบอกว่า "ส่ง 1 frame เสร็จแล้ว" และพร้อมรอ frame ถัดไป
+                            </div>
+                        </div>
+
+                        <!-- Q9 -->
+                        <div class="quiz-question" data-question="9">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: UART vs SPI</span>
+                                <h3>คำถามที่ 9: ข้อใดเป็นความแตกต่างของ UART กับ SPI?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">UART มี Master/Slave แต่ SPI ไม่มี</button>
+                                <button class="answer-btn" data-correct="false">UART เร็วกว่า SPI เสมอ</button>
+                                <button class="answer-btn" data-correct="true">UART ไม่มี Clock แยก แต่ SPI มี (SCLK)</button>
+                                <button class="answer-btn" data-correct="false">UART ต่อได้หลายอุปกรณ์พร้อมกัน</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ <strong>UART ไม่มีสาย Clock</strong> (Asynchronous) ใช้ Baud Rate ตกลงกัน ส่วน SPI มีสาย SCLK (Synchronous) ที่ Master สร้างให้
+                            </div>
+                        </div>
+
+                        <!-- Q10 -->
+                        <div class="quiz-question" data-question="10">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: ขั้นตอนการส่ง</span>
+                                <h3>คำถามที่ 10: ลำดับการส่งข้อมูล 1 frame ที่ถูกต้องคือข้อใด?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">Data → Start → Stop</button>
+                                <button class="answer-btn" data-correct="false">Stop → Data → Start</button>
+                                <button class="answer-btn" data-correct="true">Start → Data → Stop</button>
+                                <button class="answer-btn" data-correct="false">Data → Parity → Start → Stop</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ ลำดับที่ถูก: <strong>Start Bit → Data Bits (8 bits, LSB first) → [Parity] → Stop Bit</strong> — เริ่มจาก Start เสมอ!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-navigation">
+                        <button id="prev-question" class="btn-secondary" disabled>⬅️ ข้อก่อนหน้า</button>
+                        <span id="question-number">คำถาม 1/10</span>
+                        <button id="next-question" class="btn-secondary" disabled>ข้อถัดไป ➡️</button>
+                    </div>
+
+                    <div class="quiz-complete hidden" id="quiz-complete">
+                        <div class="trophy">🏆</div>
+                        <h2>ทำแบบทดสอบเสร็จแล้ว!</h2>
+                        <div class="result-card">
+                            <div class="result-name">👤 <span id="result-name"></span></div>
+                            <div class="result-score">
+                                <span class="score-number" id="final-score">0</span>
+                                <span class="score-total">/10</span>
+                            </div>
+                            <div class="result-percent" id="result-percent"></div>
+                            <div class="result-grade" id="result-grade"></div>
+                        </div>
+                        <div class="result-actions">
+                            <button id="review-wrong" class="btn-secondary">📋 ดูข้อที่ผิด</button>
+                            <button id="restart-quiz" class="btn-primary">🔄 ทำแบบทดสอบใหม่</button>
+                        </div>
+                        <div class="review-section hidden" id="review-section">
+                            <h3>❌ ข้อที่ตอบผิด</h3>
+                            <div id="review-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>UART Simulator for Vocational Education | Created for ปวส. Students</p>
+        <p style="margin-top: 0.5rem;"><a href="../" style="color: var(--primary-color);">← กลับหน้าหลัก</a></p>
+    </footer>
+
+    <script>
+        // Theory section toggle
+        function toggleTheory() {
+            const content = document.getElementById('theory-content');
+            const btn = document.getElementById('toggle-theory');
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                btn.textContent = 'ซ่อนเนื้อหา';
+            } else {
+                content.classList.add('collapsed');
+                btn.textContent = 'แสดงเนื้อหา';
+            }
+        }
+    </script>
+    <script src="js/uart-engine.js?v=1.0"></script>
+    <script src="js/animation.js?v=1.0"></script>
+    <script src="js/learning-mode.js?v=1.0"></script>
+    <script src="js/practice-mode.js?v=1.0"></script>
+    <script src="js/app.js?v=1.0"></script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+/* ===== theory.css - Theory Section Styles ===== */
+
+.theory-section {
+    margin-bottom: 2rem;
+}
+
+.theory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+}
+
+.theory-header h2 {
+    color: var(--text-color);
+    font-size: 1.3rem;
+}
+
+.toggle-theory {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.toggle-theory:hover {
+    background: var(--primary-hover);
+}
+
+.theory-content {
+    display: block;
+}
+
+.theory-content.collapsed {
+    display: none !important;
+}
+
+.theory-block {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.theory-block h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.theory-block p {
+    margin-bottom: 0.75rem;
+    line-height: 1.8;
+}
+
+.theory-block ul, .theory-block ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.theory-block li {
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+}
+
+/* ===== Term Box ===== */
+.term-box {
+    background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+    border: 2px solid #99f6e4;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+}
+
+.term-box h4 {
+    color: #0f766e;
+    margin-bottom: 0.75rem;
+}
+
+.term-box ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.term-box li {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.term-box li:last-child {
+    border-bottom: none;
+}
+
+/* ===== Signal Detail ===== */
+.signal-detail {
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+}
+
+.signal-detail h4 {
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+}
+
+.signal-detail ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+}
+
+/* ===== Process List ===== */
+.process-list {
+    counter-reset: step;
+    list-style: none;
+    padding-left: 0;
+}
+
+.process-list li {
+    position: relative;
+    padding: 1rem 1rem 1rem 3.5rem;
+    margin-bottom: 1rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.process-list li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    width: 28px;
+    height: 28px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.process-list li p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* ===== Tables ===== */
+.mode-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.mode-table th, .mode-table td {
+    padding: 0.75rem 1rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.mode-table th {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+.mode-table tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+/* ===== Highlight & Note ===== */
+.highlight {
+    background: #fef3c7;
+    border-left: 4px solid var(--warning-color);
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1rem 0;
+}
+
+.note {
+    background: #eff6ff;
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1rem 0;
+}
+
+/* ===== References ===== */
+.references {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.references h4 {
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.references ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.references li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.references li:last-child {
+    border-bottom: none;
+}
+
+.references a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.references a:hover {
+    text-decoration: underline;
+}
