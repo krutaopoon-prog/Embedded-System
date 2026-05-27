@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded System Simulators - จำลองการทำงานโปรโตคอล</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Sarabun', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .subtitle {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            margin-top: 1rem;
+        }
+
+        .simulators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .simulator-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .simulator-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .simulator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .simulator-card.coming-soon::before {
+            background: linear-gradient(90deg, #cbd5e1, #94a3b8);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge.ready {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-badge.developing {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        .features {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .features h2 {
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 3rem 0;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .simulators-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Embedded System Simulators</h1>
+            <p>เครื่องมือจำลองการทำงานโปรโตคอลต่างๆ ในระบบ Embedded สำหรับนักเรียนระดับ ปวส.</p>
+            <div class="subtitle">🎓 ประกาศนียบัตรวิชาชีพชั้นสูง</div>
+        </header>
+
+        <div class="simulators-grid">
+            <!-- SPI Card -->
+            <div class="simulator-card">
+                <div class="card-icon">🔌</div>
+                <h2 class="card-title">SPI Protocol</h2>
+                <span class="status-badge ready">✅ พร้อมใช้งาน</span>
+                <p class="card-description">
+                    จำลองการทำงานของ Serial Peripheral Interface แบบ real-time 
+                    พร้อม oscilloscope และแบบทดสอบ 10 ข้อ
+                </p>
+                <a href="./spi/" class="btn btn-primary">เข้าชม Simulator →</a>
+            </div>
+
+            <!-- UART Card -->
+            <div class="simulator-card coming-soon">
+                <div class="card-icon">🔗</div>
+                <h2 class="card-title">UART Protocol</h2>
+                <span class="status-badge developing">🚧 อยู่ระหว่างพัฒนา</span>
+                <p class="card-description">
+                    จำลองการทำงานของ Universal Asynchronous Receiver-Transmitter 
+                    สำหรับการสื่อสารแบบ asynchronous
+                </p>
+                <button class="btn btn-secondary" disabled>เร็วๆ นี้</button>
+            </div>
+
+            <!-- I2C Card -->
+            <div class="simulator-card coming-soon">
+                <div class="card-icon">🔄</div>
+                <h2 class="card-title">I2C Protocol</h2>
+                <span class="status-badge developing">🚧 อยู่ระหว่างพัฒนา</span>
+                <p class="card-description">
+                    จำลองการทำงานของ Inter-Integrated Circuit 
+                    สำหรับการเชื่อมต่อหลายอุปกรณ์ด้วยสาย 2 เส้น
+                </p>
+                <button class="btn btn-secondary" disabled>เร็วๆ นี้</button>
+            </div>
+
+            <!-- CAN Bus Card -->
+            <div class="simulator-card coming-soon">
+                <div class="card-icon">🚌</div>
+                <h2 class="card-title">CAN Bus</h2>
+                <span class="status-badge developing">🚧 อยู่ระหว่างพัฒนา</span>
+                <p class="card-description">
+                    จำลองการทำงานของ Controller Area Network 
+                    สำหรับระบบยานยนต์และอุตสาหกรรม
+                </p>
+                <button class="btn btn-secondary" disabled>เร็วๆ นี้</button>
+            </div>
+
+            <!-- One-Wire Card -->
+            <div class="simulator-card coming-soon">
+                <div class="card-icon">🌡️</div>
+                <h2 class="card-title">One-Wire</h2>
+                <span class="status-badge developing">🚧 อยู่ระหว่างพัฒนา</span>
+                <p class="card-description">
+                    จำลองการทำงานของ Dallas Semiconductor One-Wire Protocol 
+                    สำหรับเซนเซอร์อุณหภูมิ DS18B20
+                </p>
+                <button class="btn btn-secondary" disabled>เร็วๆ นี้</button>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>✨ ฟีเจอร์หลักของ Simulators</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="feature-icon">🎮</span>
+                    <span>โหมดเรียนรู้แบบ Interactive พร้อม Animation</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📊</span>
+                    <span>Oscilloscope View แสดงสัญญาณ real-time</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📝</span>
+                    <span>แบบทดสอบความเข้าใจ 10 ข้อ พร้อมเฉลย</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💻</span>
+                    <span>ตัวอย่างโค้ด Arduino สำหรับนำไปทดลอง</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📱</span>
+                    <span>รองรับทุกอุปกรณ์ Desktop, Tablet, Mobile</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🌐</span>
+                    <span>ไม่ต้องติดตั้ง ใช้งานผ่านเว็บบราวเซอร์ได้เลย</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>สร้างด้วย ❤️ สำหรับนักเรียน ปวส. | Embedded System Simulators</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                <a href="https://github.com/krutaopoon-prog/Embedded-System" style="color: white;">GitHub Repository</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
