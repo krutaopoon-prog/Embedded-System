@@ -208,12 +208,15 @@ ctx.stroke();
 - Thai language for local students
 - Code examples for practical application
 
-**Design Patterns Used:**
-- Card-based layout for protocols
-- Tab interface for code examples
-- Progress steps visualization
-- Matching game for engagement
-- Oscilloscope for technical visualization
+**Core Features (Required):**
+- Interactive Learning Mode with Animation
+- Practice Quiz (10 questions with explanations)
+- Responsive Design (Desktop, Tablet, Mobile)
+- Web-based (no installation required)
+
+**Optional Features (Protocol-dependent):**
+- Oscilloscope View (for signal visualization)
+- Arduino Code Examples (for practical testing)
 
 ---
 
