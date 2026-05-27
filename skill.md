@@ -153,17 +153,65 @@ class LearningMode {
 
 ### Quiz Flow (Practice Mode)
 ```
-1. Name Entry Screen (input name → enable start button)
-2. Quiz Questions (10 questions, each tagged with theory section)
-   - Multiple choice (4 options)
-   - Matching game (drag pairs)
-3. Result Screen:
-   - Student name
-   - Score (e.g. 8/10)
-   - Percentage (80%)
-   - Grade: ≥80% Excellent, ≥60% Good, ≥40% Fair, <40% Needs improvement
-4. Restart → back to Name Entry
+1. Name Entry Screen
+   - Input: ชื่อ-นามสกุล (ต้องกรอก ≥2 ตัวอักษร)
+   - ปุ่ม "เริ่มทำแบบทดสอบ" disabled จนกว่ากรอกชื่อ
+   - กด Enter หรือคลิกปุ่มเพื่อเริ่ม
+
+2. Quiz Questions (10 ข้อ — ทุกข้อเป็น Multiple Choice 4 ตัวเลือก)
+   - แต่ละข้อมี question-tag บอกว่ามาจากทฤษฎีส่วนไหน
+   - ตอบแล้ว: ไฮไลท์เขียว (ถูก) / แดง (ผิด) + แสดงคำอธิบาย
+   - ข้อที่ผิด → เก็บไว้ใน wrongAnswers[]
+   - Navigate: ข้อก่อนหน้า / ข้อถัดไป / เสร็จสิ้น
+
+3. Result Screen
+   - แสดงชื่อ + คะแนน (เช่น 8/10) + เปอร์เซ็นต์ + เกรด
+   - เกรด: ≥80% ดีเยี่ยม, ≥60% ดี, ≥40% พอใช้, <40% ต้องปรับปรุง
+   - ปุ่ม "📋 ดูข้อที่ผิด" → แสดงรายการข้อผิดพร้อมเฉลย
+   - ปุ่ม "🔄 ทำแบบทดสอบใหม่" → reset กลับหน้ากรอกชื่อ
+
+4. Review Wrong Answers
+   - แสดงแต่ละข้อที่ผิด: คำถาม + คำตอบของผู้ใช้ + คำตอบที่ถูก
+   - ถ้าถูกหมด → แสดง "ตอบถูกทุกข้อ!"
 ```
+
+### Quiz HTML Pattern (ทุกข้อใช้โครงสร้างนี้):
+```html
+<div class="quiz-question" data-question="1">
+  <div class="question-text">
+    <span class="question-tag">📖 ทฤษฎี: [ชื่อ section]</span>
+    <h3>คำถามที่ 1: [คำถาม]</h3>
+  </div>
+  <div class="answer-options">
+    <button class="answer-btn" data-correct="false">[ตัวเลือก]</button>
+    <button class="answer-btn" data-correct="true">[คำตอบที่ถูก]</button>
+    <button class="answer-btn" data-correct="false">[ตัวเลือก]</button>
+    <button class="answer-btn" data-correct="false">[ตัวเลือก]</button>
+  </div>
+  <div class="question-explanation hidden">
+    ✅ [คำอธิบาย]
+  </div>
+</div>
+```
+
+### Quiz JS Key Methods:
+```javascript
+class PracticeMode {
+    setupNameEntry()    // จัดการ input + enable/disable ปุ่มเริ่ม
+    startQuiz()         // ซ่อน name-entry, แสดง quiz-area, แสดงชื่อ
+    handleAnswer(btn)   // ตรวจคำตอบ, ไฮไลท์, เก็บ wrongAnswers
+    completeQuiz()      // คำนวณ %, เกรด, แสดง result card
+    showReview()        // render ข้อที่ผิดลง review-list
+    restart()           // reset ทุกอย่าง กลับหน้ากรอกชื่อ
+}
+```
+
+### Quiz Question Guidelines:
+1. **ต้องตรงกับทฤษฎี** — ห้ามถามเรื่องที่ไม่ได้สอนในโหมดเรียนรู้
+2. **ใส่ question-tag** — บอกว่าคำถามมาจากทฤษฎีส่วนไหน
+3. **4 ตัวเลือก** — 1 ถูก + 3 ผิด (ตัวเลือกผิดต้องสมเหตุสมผล)
+4. **คำอธิบาย** — อธิบายว่าทำไมถูก + อ้างอิงทฤษฎี
+5. **ภาษาไทย** — ใช้ภาษาง่ายๆ สำหรับเด็กอาชีวะ
 
 ### Sub-Simulator Pattern (separate HTML pages)
 ```javascript
