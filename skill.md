@@ -371,7 +371,62 @@ Every simulator must include a **Theory Section** before the interactive simulat
 
 ---
 
-## �🚀 Future Protocol Roadmap
+## � Technical Terminology Guidelines
+
+When writing theory sections, explain ALL technical terms thoroughly for vocational students.
+
+### Term Explanation Structure:
+```html
+<div class="term-box">
+  <h4>Term Name</h4>
+  <ul>
+    <li><strong>Definition:</strong> Technical meaning</li>
+    <li><strong>Simple analogy:</strong> Real-world comparison</li>
+    <li><strong>In this protocol:</strong> Specific usage</li>
+    <li><strong>Examples:</strong> Real devices/situations</li>
+  </ul>
+</div>
+```
+
+### Example Terms (SPI):
+
+**MOSI (Master Out Slave In):**
+- Definition: Data line from Master to Slave
+- Direction: Master → Slave (one-way)
+- Simple analogy: "Boss sending orders to employee"
+- Example: Arduino sending config to temperature sensor
+
+**Rising Edge:**
+- Definition: Signal transition from LOW to HIGH (0 → 1)
+- Simple analogy: "Walking UP stairs from ground floor"
+- Why it matters: "Reading at stable point, not during transition"
+
+**Full-Duplex:**
+- Definition: Send and receive simultaneously
+- Simple analogy: "Phone call (both talk) vs Walkie-talkie (take turns)"
+
+### CSS for Term Boxes:
+```css
+.term-box {
+    background: #eff6ff;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+```
+
+### Key Principles:
+1. Never assume prior knowledge - Explain EVERY acronym
+2. Use analogies - Compare to everyday experiences
+3. Show direction - Use arrows (→ ←)
+4. Give examples - Real device names
+5. Explain WHY - Not just what, but why it matters
+6. Thai + English - Give English term, explain in Thai
+
+---
+
+## ��🚀 Future Protocol Roadmap
 
 | Protocol | Difficulty | Key Features Needed |
 |----------|------------|---------------------|
