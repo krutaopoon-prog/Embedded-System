@@ -1,291 +1,90 @@
 # 🛠️ Skill Documentation - Embedded System Simulators
 
+> **Purpose:** This file is for AI collaborators to understand the project quickly.  
+> If you are an AI reading this, follow the conventions documented here.
+
 **Project:** Interactive Protocol Simulators for Vocational Education  
 **Target Audience:** Vocational Certificate Students (ปวส.)  
 **Author:** krutaopoon-prog  
+**GitHub:** https://github.com/krutaopoon-prog/Embedded-System  
+**Live Demo:** https://krutaopoon-prog.github.io/Embedded-System/  
 **Created:** May 27, 2026
 
 ---
 
-## 📋 Project Overview
-
-Building web-based interactive simulators for embedded system communication protocols. Current implementation: **SPI Protocol**. Planned: UART, I2C, CAN Bus, One-Wire.
-
----
-
-## 🔧 Core Skills Required
-
-### 1. HTML5 & Semantic Structure
-**Level:** Intermediate
-
-**Key Concepts:**
-- Semantic HTML structure (`<header>`, `<main>`, `<section>`, `<footer>`)
-- Data attributes for JavaScript hooks (`data-question`, `data-tab`)
-- Canvas element for waveform visualization
-- SVG for signal line diagrams
-
-**Used In:**
-- `index.html` - Landing page with protocol cards
-- `spi/index.html` - Main simulator interface
-
-**Best Practices:**
-```html
-<!-- Use semantic elements -->
-<section id="learning-mode" class="mode-section active">
-  <div class="visualization-panel">...</div>
-</section>
-
-<!-- Data attributes for JS -->
-<button class="answer-btn" data-correct="true">MOSI</button>
-```
-
----
-
-### 2. CSS3 & Modern Styling
-**Level:** Advanced
-
-**Key Concepts:**
-- CSS Custom Properties (Variables)
-- CSS Grid & Flexbox layouts
-- CSS Animations & Transitions
-- Responsive Design (Mobile-first)
-- Glassmorphism effects
-
-**Used In:**
-- `spi/css/style.css` - All styling
-- `index.html` (inline) - Landing page styles
-
-**Best Practices:**
-```css
-/* CSS Variables for consistency */
-:root {
-  --primary-color: #2563eb;
-  --success-color: #22c55e;
-  --bg-color: #f8fafc;
-}
-
-/* Grid for responsive layouts */
-.simulators-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-/* Smooth transitions */
-.card {
-  transition: all 0.3s ease;
-}
-.card:hover {
-  transform: translateY(-10px);
-}
-```
-
----
-
-### 3. Vanilla JavaScript (ES6+)
-**Level:** Advanced
-
-**Key Concepts:**
-- ES6 Classes for architecture
-- Event Delegation & Event Listeners
-- Canvas API for drawing
-- State management patterns
-- Callback functions for async events
-
-**Architecture Pattern:**
-```javascript
-// Engine pattern for protocol simulation
-class SPIEngine {
-  constructor() {
-    this.state = {};
-    this.callbacks = {};
-  }
-  
-  setMode(mode) { /* ... */ }
-  step() { /* ... */ }
-  
-  // Event-driven callbacks
-  onStateChange = null;
-  onComplete = null;
-}
-
-// Controller pattern for UI
-class AnimationController {
-  constructor(engine) {
-    this.engine = engine;
-    this.setupCallbacks();
-  }
-  
-  setupCallbacks() {
-    this.engine.onStateChange = (state) => {
-      this.updateUI(state);
-    };
-  }
-}
-```
-
-**Used In:**
-- `spi-engine.js` - Protocol simulation logic
-- `animation.js` - UI updates & canvas drawing
-- `learning-mode.js` - Learning mode controller
-- `practice-mode.js` - Quiz controller
-- `app.js` - Main application controller
-
----
-
-### 4. Canvas API
-**Level:** Intermediate
-
-**Key Concepts:**
-- 2D Context drawing
-- Drawing waveforms (digital signals)
-- Grid systems
-- Animation loops
-- Responsive canvas sizing
-
-**Code Pattern:**
-```javascript
-const canvas = document.getElementById('scope-canvas');
-const ctx = canvas.getContext('2d');
-
-// Clear canvas
-ctx.fillStyle = '#020617';
-ctx.fillRect(0, 0, width, height);
-
-// Draw digital signal
-ctx.strokeStyle = '#22c55e';
-ctx.beginPath();
-signalData.forEach((value, index) => {
-  const x = index * stepWidth;
-  const y = baseY + (value === 1 ? -15 : 15);
-  if (index === 0) ctx.moveTo(x, y);
-  else ctx.lineTo(x, y);
-});
-ctx.stroke();
-```
-
----
-
-### 5. SVG Graphics
-**Level:** Basic
-
-**Key Concepts:**
-- Line elements for connections
-- ViewBox for responsive scaling
-- CSS classes for styling SVG
-- Dynamic class toggling for active states
-
-**Used In:**
-- Signal line diagram in SPI simulator
-
----
-
-### 6. Communication Protocol Knowledge
-**Level:** Expert (Domain Knowledge)
-
-**SPI Protocol Specifics:**
-- 4-wire interface (MOSI, MISO, SCLK, SS)
-- Full-duplex communication
-- Clock polarity (CPOL) & phase (CPHA)
-- 4 modes (0, 1, 2, 3) - implemented 0 & 3
-- MSB-first transmission
-- Slave Select (SS) active LOW
-
-**Key Timing:**
-- 1 byte = 8 clock cycles
-- Sampling on rising/falling edge based on mode
-- SS LOW before transmission, HIGH after
-
----
-
-### 7. UI/UX Design for Education
-**Level:** Intermediate
-
-**Key Principles:**
-- Clear visual hierarchy
-- Step-by-step progression indicators
-- Immediate feedback (correct/incorrect highlights)
-- Responsive for all devices
-- Thai language for local students
-- Code examples for practical application
-
-**Core Features (Required):**
-- Theory Section - Educational content before simulation (with references)
-- Interactive Learning Mode with Animation
-- Practice Quiz (10 questions with explanations)
-- Responsive Design (Desktop, Tablet, Mobile)
-- Web-based (no installation required)
-
-**Optional Features (Protocol-dependent):**
-- Oscilloscope View (for signal visualization)
-- Arduino Code Examples (for practical testing)
-
----
-
-### 8. Git & GitHub
-**Level:** Intermediate
-
-**Workflow:**
-```bash
-git init
-git add .
-git commit -m "message"
-git remote add origin <url>
-git push -u origin main
-```
-
-**GitHub Pages Deployment:**
-- Settings → Pages → Source: main branch, root
-- Auto-deploy on push
-- URL: `https://username.github.io/repo-name/`
-
----
-
-## 📁 File Structure Convention
+## � Current File Structure
 
 ```
-project-root/
-├── index.html              # Landing page (catalog)
-├── skill.md                # This file - documentation
-├── README.md               # User-facing documentation
-├── protocol-name/          # Each protocol simulator
-│   ├── index.html
+embedded-system/
+├── index.html              # Landing page - links to all simulators
+├── skill.md                # THIS FILE - AI documentation
+├── README.md               # User-facing README
+│
+├── spi/                    # ✅ SPI Protocol (DONE)
+│   ├── index.html          # Theory + Simulator + Quiz (single page)
 │   ├── README.md
 │   ├── css/
-│   │   └── style.css
+│   │   ├── base.css        # Variables, Reset, Header, Footer, Responsive
+│   │   ├── theory.css      # Theory section styles
+│   │   └── simulator.css   # Simulator + Quiz styles
 │   ├── js/
-│   │   ├── engine.js       # Protocol logic
-│   │   ├── animation.js    # UI controller
-│   │   ├── learning-mode.js
-│   │   ├── practice-mode.js
-│   │   └── app.js          # Main entry
-│   └── assets/             # Images, icons
-└── [other-protocols]/     # Future implementations
+│   │   ├── spi-engine.js   # SPI protocol logic (modes 0 & 3)
+│   │   ├── animation.js    # Canvas oscilloscope + SVG diagram
+│   │   ├── learning-mode.js# Learning mode controller + theory toggle
+│   │   ├── practice-mode.js# Quiz controller (10 questions)
+│   │   └── app.js          # Main entry - mode switching
+│   └── assets/             # (empty - for future images)
+│
+└── uart/                   # 🔜 UART Protocol (PLANNED)
 ```
+
+---
+
+## ⚡ Quick Reference - What Each File Does
+
+| File | Role |
+|------|------|
+| `base.css` | CSS variables, reset, header/footer, responsive breakpoints |
+| `theory.css` | `.theory-block`, `.term-box`, `.signal-detail`, `.process-list`, tables, references |
+| `simulator.css` | Connection diagram, oscilloscope, controls, buttons, quiz, matching game |
+| `spi-engine.js` | SPI state machine: `start()`, `step()`, `reset()`, modes 0/3 |
+| `animation.js` | Canvas waveform drawing, SVG signal lines, UI updates |
+| `learning-mode.js` | Init, event listeners, theory toggle, code tabs, SPI callbacks |
+| `practice-mode.js` | Quiz questions, scoring, matching game, waveform quiz |
+| `app.js` | Mode switching (learning ↔ practice), main init |
+
+---
+
+## 🎯 Core Features (Every Simulator Must Have)
+
+1. **Theory Section** - Read before simulation (with references)
+2. **Interactive Learning Mode** - Animation + step-by-step
+3. **Practice Quiz** - 10 questions with Thai explanations
+4. **Responsive Design** - Desktop, Tablet, Mobile
+5. **Web-based** - No installation, browser only
+
+**Optional (protocol-dependent):**
+- Oscilloscope View (signal visualization)
+- Arduino Code Examples
 
 ---
 
 ## 🎨 Design System
 
-### Color Palette
+### Colors
 ```css
-/* Primary */
---primary-color: #2563eb;    /* Blue */
---primary-hover: #1d4ed8;
-
-/* Status */
+--primary-color: #2563eb;    /* Blue - main actions */
 --success-color: #22c55e;    /* Green - correct/active */
---error-color: #ef4444;      /* Red - incorrect/SS */
---warning-color: #f59e0b;    /* Orange */
+--error-color: #ef4444;      /* Red - incorrect/SS signal */
+--warning-color: #f59e0b;    /* Orange - notes */
+--bg-color: #f8fafc;         /* Page background */
+--card-bg: #ffffff;          /* Card background */
+--text-color: #1e293b;       /* Main text */
+--text-muted: #64748b;       /* Secondary text */
+```
 
-/* Backgrounds */
---bg-color: #f8fafc;         /* Light gray */
---card-bg: #ffffff;
-
-/* Text */
---text-color: #1e293b;       /* Dark slate */
---text-muted: #64748b;
-
-/* Signals (Oscilloscope) */
+### Signal Colors (Oscilloscope)
+```
 MOSI: #3b82f6 (Blue)
 MISO: #22c55e (Green)
 SCLK: #8b5cf6 (Purple)
@@ -293,208 +92,174 @@ SS:   #ef4444 (Red)
 ```
 
 ### Typography
-- Font: `'Segoe UI', 'Sarabun', Tahoma, sans-serif`
-- Monospace: `'Consolas', 'Monaco', monospace`
+- UI Font: `'Segoe UI', 'Sarabun', Tahoma, sans-serif`
+- Code Font: `'Consolas', 'Monaco', monospace`
 
 ### Layout
-- Container: `max-width: 1400px`
-- Grid gap: `1.5rem - 2rem`
-- Border radius: `8px - 12px - 20px` (small, medium, large)
-- Shadows: `0 4px 6px -1px rgba(0,0,0,0.1)`
+- Max width: `1400px`
+- Border radius: `8px` (small), `12px` (medium)
+- Shadow: `0 4px 6px -1px rgba(0,0,0,0.1)`
 
 ---
 
 ## 🧠 Architecture Patterns
 
-### 1. Engine Pattern
-Protocol simulation engine handles:
-- State management
-- Step execution
-- History recording
-- Event emission
+### Engine Pattern (protocol logic)
+```javascript
+class SPIEngine {
+    constructor() { this.state = {}; }
+    start()  { /* init transfer */ }
+    step()   { /* advance 1 clock cycle */ }
+    reset()  { /* reset all state */ }
+    onStateChange = null;  // callback
+    onComplete = null;     // callback
+}
+```
 
-### 2. Controller Pattern
-UI controllers handle:
-- DOM manipulation
-- Event binding
-- Animation timing
-- Canvas drawing
+### Controller Pattern (UI)
+```javascript
+class LearningMode {
+    init() { /* setup event listeners + engine */ }
+    setupTheoryToggle() { /* show/hide theory */ }
+    setupSPIEngine() { /* connect engine callbacks to UI */ }
+}
+```
 
-### 3. Mode Pattern
-Separate modes for different learning styles:
-- Learning Mode: Visual, step-by-step
-- Practice Mode: Interactive quiz
+### Mode Pattern
+- **Learning Mode:** Visual step-by-step with explanations
+- **Practice Mode:** Interactive quiz with scoring
 
 ---
 
-## � Theory Section Structure
+## 📚 Theory Section Guidelines
 
-Every simulator must include a **Theory Section** before the interactive simulation.
-
-### Content Structure:
-```
-📖 Theory Section
-├── Header (collapsible)
-│   └── Toggle button (show/hide)
-│
-├── Content Cards (2-4 cards)
-│   ├── What is [Protocol]? - Definition & history
-│   ├── Signal Lines - Pin descriptions & directions
-│   ├── Protocol Modes/Config - Timing diagrams
-│   └── Data Transfer Process - Step-by-step
-│
-└── References
-    ├── Official specifications
-    ├── Tutorials (SparkFun, Adafruit, etc.)
-    └── Datasheets
-```
-
-### Implementation:
+### Structure (single column, NOT grid):
 ```html
 <div class="theory-section">
   <div class="theory-header">
     <h2>📖 ทฤษฎีก่อนใช้ Simulator</h2>
-    <button class="toggle-theory">ซ่อน/แสดง</button>
+    <button onclick="toggleTheory()">ซ่อนเนื้อหา</button>
   </div>
-  <div class="theory-content">
-    <!-- Theory cards here -->
+  <div class="theory-content" id="theory-content">
+    <div class="theory-block">...</div>  <!-- Section 1 -->
+    <div class="theory-block">...</div>  <!-- Section 2 -->
     <div class="references">...</div>
   </div>
 </div>
 ```
 
-### Content Sources (Cite in References):
+### Toggle Function (inline script in HTML):
+```javascript
+function toggleTheory() {
+    const content = document.getElementById('theory-content');
+    const btn = document.getElementById('toggle-theory');
+    if (content.classList.contains('collapsed')) {
+        content.classList.remove('collapsed');
+        btn.textContent = 'ซ่อนเนื้อหา';
+    } else {
+        content.classList.add('collapsed');
+        btn.textContent = 'แสดงเนื้อหา';
+    }
+}
+```
+
+### Content Sources (always cite):
 - Official protocol specifications
-- Industry standard documentation
-- Educational resources (SparkFun, Adafruit, Analog Devices)
+- Analog Devices, SparkFun, Adafruit tutorials
 - Arduino/Platform documentation
 
 ---
 
-## � Technical Terminology Guidelines
+## 📖 Technical Terminology Guidelines
 
-When writing theory sections, explain ALL technical terms thoroughly for vocational students.
+**Rule:** Explain EVERY technical term for vocational students.
 
-### Term Explanation Structure:
+### HTML Pattern:
 ```html
 <div class="term-box">
-  <h4>Term Name</h4>
+  <h4>📘 Term Name</h4>
   <ul>
     <li><strong>Definition:</strong> Technical meaning</li>
     <li><strong>Simple analogy:</strong> Real-world comparison</li>
-    <li><strong>In this protocol:</strong> Specific usage</li>
-    <li><strong>Examples:</strong> Real devices/situations</li>
+    <li><strong>Examples:</strong> Real devices</li>
+  </ul>
+</div>
+
+<div class="signal-detail">
+  <h4>🟢 MOSI - Master Out Slave In</h4>
+  <ul>
+    <li><strong>Direction:</strong> Master → Slave</li>
+    <li><strong>Simple:</strong> Boss sends orders to employee</li>
   </ul>
 </div>
 ```
 
-### Example Terms (SPI):
-
-**MOSI (Master Out Slave In):**
-- Definition: Data line from Master to Slave
-- Direction: Master → Slave (one-way)
-- Simple analogy: "Boss sending orders to employee"
-- Example: Arduino sending config to temperature sensor
-
-**Rising Edge:**
-- Definition: Signal transition from LOW to HIGH (0 → 1)
-- Simple analogy: "Walking UP stairs from ground floor"
-- Why it matters: "Reading at stable point, not during transition"
-
-**Full-Duplex:**
-- Definition: Send and receive simultaneously
-- Simple analogy: "Phone call (both talk) vs Walkie-talkie (take turns)"
-
-### CSS for Term Boxes:
-```css
-.term-box {
-    background: #eff6ff;
-    border: 2px solid #3b82f6;
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 1rem 0;
-}
-```
-
 ### Key Principles:
-1. Never assume prior knowledge - Explain EVERY acronym
-2. Use analogies - Compare to everyday experiences
-3. Show direction - Use arrows (→ ←)
-4. Give examples - Real device names
-5. Explain WHY - Not just what, but why it matters
-6. Thai + English - Give English term, explain in Thai
+1. **Never assume prior knowledge** - Explain EVERY acronym
+2. **Use analogies** - Compare to everyday experiences
+3. **Show direction** - Use arrows (→ ←)
+4. **Give examples** - Real device names students know
+5. **Explain WHY** - Not just what, but why it matters
+6. **Thai + English** - English term, explain in Thai
+
+### Example Terms:
+
+| Term | Meaning | Analogy |
+|------|---------|---------|
+| MOSI | Master Out Slave In | Boss → Employee (send) |
+| MISO | Master In Slave Out | Employee → Boss (reply) |
+| SCLK | Serial Clock | Metronome / rhythm |
+| SS/CS | Slave Select / Chip Select | Calling someone's name |
+| Rising Edge | LOW → HIGH transition | Walking UP stairs |
+| Falling Edge | HIGH → LOW transition | Walking DOWN stairs |
+| Full-Duplex | Send + Receive simultaneously | Phone call |
+| Master | Controller device | Boss |
+| Slave | Peripheral device | Employee |
 
 ---
 
-## ��🚀 Future Protocol Roadmap
+## 🔄 Cache Control for GitHub Pages
 
-| Protocol | Difficulty | Key Features Needed |
-|----------|------------|---------------------|
-| UART | Easy | Baud rate, start/stop bits, parity |
-| I2C | Hard | Addressing, ACK/NACK, multi-master |
-| CAN Bus | Very Hard | Message IDs, arbitration, error handling |
-| One-Wire | Medium | Time-slots, ROM commands, CRC |
+### Always use both methods together:
 
----
-
-## � Cache Control for GitHub Pages
-
-GitHub Pages caches files aggressively. Use these methods to prevent stale content:
-
-### Method 1: Meta Tags (HTML)
-Add to `<head>` in all HTML files:
+**Method 1: Meta Tags** (in `<head>`):
 ```html
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 ```
 
-### Method 2: Version Query Strings
-Append version to CSS/JS files:
+**Method 2: Version Query Strings** (on CSS/JS links):
 ```html
-<link rel="stylesheet" href="css/style.css?v=1.0">
-<script src="js/app.js?v=1.0"></script>
+<link rel="stylesheet" href="css/base.css?v=1.0">
+<script src="js/app.js?v=1.2"></script>
 ```
-Update version number when files change: `?v=1.1`, `?v=1.2`, etc.
-
-### Method 3: Cache-Busting URL (Quick Fix)
-Add timestamp parameter for immediate refresh:
-```
-https://username.github.io/repo/?nocache=1
-```
-
-### Recommended Approach
-Use **Method 1 + Method 2** together for best results.
+> **Important:** Increment version when file changes: `?v=1.0` → `?v=1.1`
 
 ---
 
-## �� Adding New Skills
+## 🚀 Future Protocol Roadmap
 
-When adding new protocols, document new skills here:
-
-```markdown
-### X. [New Skill Name]
-**Level:** [Beginner/Intermediate/Advanced]
-
-**Key Concepts:**
-- Concept 1
-- Concept 2
-
-**Code Pattern:**
-```javascript
-// Example code
-```
-```
+| Protocol | Difficulty | Status |
+|----------|-----------|--------|
+| SPI | Medium | ✅ Done |
+| UART | Easy | 🔜 Next |
+| I2C | Hard | 📋 Planned |
+| CAN Bus | Very Hard | 📋 Planned |
+| One-Wire | Medium | 📋 Planned |
 
 ---
 
-## 🔗 Repository Links
+## ✏️ How to Add a New Protocol
 
-- **GitHub:** https://github.com/krutaopoon-prog/Embedded-System
-- **Live Demo:** https://krutaopoon-prog.github.io/Embedded-System/
-- **SPI Demo:** https://krutaopoon-prog.github.io/Embedded-System/spi/
+1. Create folder: `protocol-name/`
+2. Copy CSS structure: `css/base.css`, `css/theory.css`, `css/simulator.css`
+3. Create JS files: `engine.js`, `animation.js`, `learning-mode.js`, `practice-mode.js`, `app.js`
+4. Write `index.html` with Theory Section + Simulator + Quiz
+5. Add link in root `index.html`
+6. Update this `skill.md`
 
 ---
 
 **Last Updated:** May 27, 2026  
-**Status:** SPI Complete, UART/I2C/CAN Bus/One-Wire Planned
+**Status:** SPI Complete | CSS Refactored (3 files)
