@@ -132,7 +132,7 @@ main {
 }
 
 .theory-content.collapsed {
-    display: none;
+    display: none !important;
 }
 
 /* Single Column Theory Layout */
