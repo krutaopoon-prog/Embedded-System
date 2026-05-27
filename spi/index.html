@@ -255,6 +255,27 @@
                         <p class="highlight">⚡ สรุป: 1 byte = 8 bits = 8 clock cycles = ส่งและรับพร้อมกัน 8 ครั้ง</p>
                     </div>
                     
+                    <!-- Section 7: ตัวอย่างอุปกรณ์ SPI ในงานจริง -->
+                    <div class="theory-block">
+                        <h3>🌡️ ตัวอย่างอุปกรณ์ SPI ในงานจริง: MAX6675</h3>
+                        <p><strong>MAX6675</strong> เป็นโมดูลแปลงสัญญาณสำหรับหัววัดอุณหภูมิแบบ <strong>Thermocouple Type K</strong> โดยชิปจะทำการชดเชยอุณหภูมิที่จุดอ้างอิง (Cold-Junction) และแปลงสัญญาณเป็นข้อมูลดิจิทัลความละเอียด 12-bit อ่านค่าอุณหภูมิได้ละเอียด 0.25°C ผ่านการสื่อสารแบบ <strong>SPI</strong></p>
+                        
+                        <img src="SPI-interface-temp.png" alt="MAX6675 SPI Interface - Thermocouple Temperature Sensor" style="width: 100%; max-width: 600px; display: block; margin: 1.5rem auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        
+                        <div class="term-box">
+                            <h4>📘 คุณสมบัติทางเทคนิค MAX6675</h4>
+                            <ul>
+                                <li><strong>ย่านการวัดอุณหภูมิ:</strong> 0°C ถึง 800°C (หัวโพรบมาตรฐาน)</li>
+                                <li><strong>ความละเอียด:</strong> 12-bit (เทียบเท่า 0.25°C ต่อ 1 LSB)</li>
+                                <li><strong>แรงดันไฟเลี้ยง (Operating Voltage):</strong> 3.0V ถึง 5.5V</li>
+                                <li><strong>การชดเชยอุณหภูมิ:</strong> มีวงจรชดเชยอุณหภูมิที่จุดต่อ (Cold-Junction) ในตัว</li>
+                                <li><strong>การเชื่อมต่อ:</strong> SPI Interface (ใช้สาย MISO, SCLK, CS)</li>
+                            </ul>
+                        </div>
+                        
+                        <p class="highlight">💡 <strong>MAX6675 เป็นตัวอย่างที่ดีของอุปกรณ์ Slave</strong> — Arduino (Master) ส่งสัญญาณ CS = LOW เพื่อเลือก MAX6675 แล้วอ่านค่าอุณหภูมิกลับมาผ่านสาย MISO ทุกครั้งที่มี SCLK</p>
+                    </div>
+                    
                     <div class="references">
                         <h4>📚 แหล่งอ้างอิง</h4>
                         <ul>
