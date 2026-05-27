@@ -88,6 +88,168 @@ main {
     display: block;
 }
 
+/* ===== Theory Section ===== */
+.theory-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.theory-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.theory-header h2 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.toggle-theory {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.toggle-theory:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.theory-content {
+    padding: 1.5rem;
+    display: block;
+}
+
+.theory-content.collapsed {
+    display: none;
+}
+
+.theory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.theory-card {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.theory-card h3 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+.theory-card p {
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.theory-card ul,
+.theory-card ol {
+    padding-left: 1.25rem;
+    color: var(--text-color);
+}
+
+.theory-card li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.signal-table,
+.mode-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+}
+
+.signal-table th,
+.signal-table td,
+.mode-table th,
+.mode-table td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.signal-table th,
+.mode-table th {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+.signal-table tr:hover,
+.mode-table tr:hover {
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.theory-card .note {
+    background: #fef3c7;
+    border-left: 3px solid var(--warning-color);
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.theory-card .highlight {
+    background: #dcfce7;
+    border-left: 3px solid var(--success-color);
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.references {
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+}
+
+.references h4 {
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.references ul {
+    padding-left: 1.25rem;
+    font-size: 0.9rem;
+}
+
+.references li {
+    margin-bottom: 0.4rem;
+}
+
+.references a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.references a:hover {
+    text-decoration: underline;
+}
+
 /* ===== Learning Mode ===== */
 .main-container {
     display: grid;

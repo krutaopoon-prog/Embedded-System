@@ -34,6 +34,7 @@ class LearningMode {
         this.setupEventListeners();
         this.setupCodeTabs();
         this.setupSPIEngine();
+        this.setupTheoryToggle();
         this.updateBinaryDisplay();
     }
 
@@ -103,6 +104,23 @@ class LearningMode {
                 });
             });
         });
+    }
+
+    /**
+     * ตั้งค่า Theory Section Toggle
+     */
+    setupTheoryToggle() {
+        const toggleBtn = document.getElementById('toggle-theory');
+        const theoryContent = document.getElementById('theory-content');
+        
+        if (toggleBtn && theoryContent) {
+            toggleBtn.addEventListener('click', () => {
+                theoryContent.classList.toggle('collapsed');
+                toggleBtn.textContent = theoryContent.classList.contains('collapsed') 
+                    ? 'แสดงเนื้อหา' 
+                    : 'ซ่อนเนื้อหา';
+            });
+        }
     }
 
     /**

@@ -209,6 +209,7 @@ ctx.stroke();
 - Code examples for practical application
 
 **Core Features (Required):**
+- Theory Section - Educational content before simulation (with references)
 - Interactive Learning Mode with Animation
 - Practice Quiz (10 questions with explanations)
 - Responsive Design (Desktop, Tablet, Mobile)
@@ -326,7 +327,51 @@ Separate modes for different learning styles:
 
 ---
 
-## 🚀 Future Protocol Roadmap
+## � Theory Section Structure
+
+Every simulator must include a **Theory Section** before the interactive simulation.
+
+### Content Structure:
+```
+📖 Theory Section
+├── Header (collapsible)
+│   └── Toggle button (show/hide)
+│
+├── Content Cards (2-4 cards)
+│   ├── What is [Protocol]? - Definition & history
+│   ├── Signal Lines - Pin descriptions & directions
+│   ├── Protocol Modes/Config - Timing diagrams
+│   └── Data Transfer Process - Step-by-step
+│
+└── References
+    ├── Official specifications
+    ├── Tutorials (SparkFun, Adafruit, etc.)
+    └── Datasheets
+```
+
+### Implementation:
+```html
+<div class="theory-section">
+  <div class="theory-header">
+    <h2>📖 ทฤษฎีก่อนใช้ Simulator</h2>
+    <button class="toggle-theory">ซ่อน/แสดง</button>
+  </div>
+  <div class="theory-content">
+    <!-- Theory cards here -->
+    <div class="references">...</div>
+  </div>
+</div>
+```
+
+### Content Sources (Cite in References):
+- Official protocol specifications
+- Industry standard documentation
+- Educational resources (SparkFun, Adafruit, Analog Devices)
+- Arduino/Platform documentation
+
+---
+
+## �🚀 Future Protocol Roadmap
 
 | Protocol | Difficulty | Key Features Needed |
 |----------|------------|---------------------|
@@ -368,7 +413,7 @@ Use **Method 1 + Method 2** together for best results.
 
 ---
 
-## �📝 Adding New Skills
+## �� Adding New Skills
 
 When adding new protocols, document new skills here:
 

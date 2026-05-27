@@ -25,6 +25,119 @@
     <main>
         <!-- Learning Mode -->
         <section id="learning-mode" class="mode-section active">
+            <!-- Theory Section - Read Before Simulation -->
+            <div class="theory-section">
+                <div class="theory-header">
+                    <h2>📖 ทฤษฎีก่อนใช้ Simulator</h2>
+                    <button class="toggle-theory" id="toggle-theory">ซ่อน/แสดง</button>
+                </div>
+                <div class="theory-content" id="theory-content">
+                    <div class="theory-grid">
+                        <div class="theory-card">
+                            <h3>🔌 SPI คืออะไร?</h3>
+                            <p><strong>SPI (Serial Peripheral Interface)</strong> เป็นโปรโตคอลสื่อสารแบบ Synchronous Serial ที่ใช้สำหรับเชื่อมต่ออุปกรณ์ระยะใกล้ในระบบ Embedded System</p>
+                            <ul>
+                                <li>พัฒนาโดย Motorola ในปี 1970s</li>
+                                <li>สื่อสารแบบ <strong>Full-Duplex</strong> (ส่งและรับพร้อมกัน)</li>
+                                <li>ใช้สายสัญญาณ 4 เส้น (แบบ 4-wire)</li>
+                                <li>รองรับความเร็วสูง (หลาย MHz)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="theory-card">
+                            <h3>📡 สายสัญญาณ 4 เส้น</h3>
+                            <table class="signal-table">
+                                <tr>
+                                    <th>สัญญาณ</th>
+                                    <th>ทิศทาง</th>
+                                    <th>หน้าที่</th>
+                                </tr>
+                                <tr>
+                                    <td><strong>MOSI</strong></td>
+                                    <td>Master → Slave</td>
+                                    <td>ส่งข้อมูลจาก Master ไป Slave</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MISO</strong></td>
+                                    <td>Slave → Master</td>
+                                    <td>ส่งข้อมูลจาก Slave กลับ Master</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SCLK</strong></td>
+                                    <td>Master → Slave</td>
+                                    <td>สัญญาณนาฬิกาสำหรับซิงค์</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SS (CS)</strong></td>
+                                    <td>Master → Slave</td>
+                                    <td>เลือก Slave ที่จะสื่อสาร (Active LOW)</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="theory-card">
+                            <h3>⚙️ SPI Modes (CPOL & CPHA)</h3>
+                            <p>SPI มี 4 Modes ตามการตั้งค่า Clock Polarity (CPOL) และ Clock Phase (CPHA):</p>
+                            <table class="mode-table">
+                                <tr>
+                                    <th>Mode</th>
+                                    <th>CPOL</th>
+                                    <th>CPHA</th>
+                                    <th>คำอธิบาย</th>
+                                </tr>
+                                <tr>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>เริ่ม LOW, อ่านที่ rising edge</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>เริ่ม LOW, อ่านที่ falling edge</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>เริ่ม HIGH, อ่านที่ falling edge</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>เริ่ม HIGH, อ่านที่ rising edge</td>
+                                </tr>
+                            </table>
+                            <p class="note">💡 <strong>Simulator นี้รองรับ Mode 0 และ 3</strong> (ทั้งคู่ sample ที่ rising edge)</p>
+                        </div>
+                        
+                        <div class="theory-card">
+                            <h3>🔄 การส่งข้อมูล (Data Transfer)</h3>
+                            <ol>
+                                <li><strong>Master ส่งสัญญาณ SS = LOW</strong> เพื่อเลือก Slave</li>
+                                <li><strong>ส่งข้อมูลบิตต่อบิต</strong> แบบ MSB-first (บิตสูงสุดก่อน)</li>
+                                <li><strong>ทุก clock cycle</strong> ส่งและรับพร้อมกัน 1 บิต</li>
+                                <li><strong>ครบ 8 cycles</strong> = ส่งข้อมูล 1 byte เสร็จสมบูรณ์</li>
+                                <li><strong>Master ส่ง SS = HIGH</strong> เพื่อจบการสื่อสาร</li>
+                            </ol>
+                            <p class="highlight">⚡ 1 byte = 8 bits = 8 clock cycles</p>
+                        </div>
+                    </div>
+                    
+                    <div class="references">
+                        <h4>📚 แหล่งอ้างอิง</h4>
+                        <ul>
+                            <li>Motorola SPI Block Guide (SPIBG) - Original SPI Specification</li>
+                            <li><a href="https://www.analog.com/en/analog-dialogue/articles/introduction-to-spi-interface.html" target="_blank">Analog Devices - Introduction to SPI Interface</a></li>
+                            <li><a href="https://www.sparkfun.com/spi" target="_blank">SparkFun - SPI Tutorial</a></li>
+                            <li>Arduino SPI Library Documentation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
             <div class="main-container">
                 <!-- Visualization Area -->
                 <div class="visualization-panel">
