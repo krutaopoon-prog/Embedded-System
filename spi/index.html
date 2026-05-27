@@ -463,7 +463,7 @@ void loop() {
                     <div class="name-entry-card">
                         <div class="name-entry-icon">📝</div>
                         <h2>แบบทดสอบความเข้าใจ SPI Protocol</h2>
-                        <p>ทดสอบความรู้จากเนื้อหาทฤษฎีที่เรียนมา (8 ข้อ)</p>
+                        <p>ทดสอบความรู้จากเนื้อหาทฤษฎีที่เรียนมา (10 ข้อ)</p>
                         <div class="name-input-group">
                             <label for="student-name">กรอกชื่อ-นามสกุล:</label>
                             <input type="text" id="student-name" placeholder="เช่น สมชาย ใจดี" maxlength="50" autocomplete="off">
@@ -479,7 +479,7 @@ void loop() {
                         <h2>📝 แบบทดสอบความเข้าใจ SPI</h2>
                         <div class="quiz-header-info">
                             <span class="student-name-display" id="student-name-display"></span>
-                            <div class="score-display">คะแนน: <span id="score">0</span>/8</div>
+                            <div class="score-display">คะแนน: <span id="score">0</span>/10</div>
                         </div>
                     </div>
 
@@ -625,11 +625,45 @@ void loop() {
                                 ✅ ขั้นตอนแรกคือ <strong>Master ส่ง SS = LOW</strong> เพื่อเลือก Slave ที่ต้องการสื่อสาร — บอก Slave ว่า "เดี๋ยวจะคุยกับนายนะ"
                             </div>
                         </div>
+
+                        <!-- Q9: Master & Slave (ทฤษฎี Section 2) -->
+                        <div class="quiz-question" data-question="9">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Master และ Slave</span>
+                                <h3>คำถามที่ 9: อุปกรณ์ใดเป็นผู้สร้างสัญญาณนาฬิกา (SCLK) ในการสื่อสาร SPI?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="true">Master เท่านั้น</button>
+                                <button class="answer-btn" data-correct="false">Slave เท่านั้น</button>
+                                <button class="answer-btn" data-correct="false">ทั้ง Master และ Slave สลับกัน</button>
+                                <button class="answer-btn" data-correct="false">ไม่มีใครสร้าง สัญญาณมาจากภายนอก</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ <strong>Master เท่านั้น</strong>ที่สร้างสัญญาณนาฬิกา (SCLK) — Master ควบคุมการสื่อสารทั้งหมด ส่วน Slave รอรับคำสั่ง
+                            </div>
+                        </div>
+
+                        <!-- Q10: ขั้นตอนการส่ง MSB-first (ทฤษฎี Section 6) -->
+                        <div class="quiz-question" data-question="10">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: ขั้นตอนการส่งข้อมูล</span>
+                                <h3>คำถามที่ 10: การส่งข้อมูล 1 byte (8 bits) ใน SPI ต้องใช้กี่ clock cycles?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">1 clock cycle</button>
+                                <button class="answer-btn" data-correct="false">4 clock cycles</button>
+                                <button class="answer-btn" data-correct="true">8 clock cycles</button>
+                                <button class="answer-btn" data-correct="false">16 clock cycles</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ SPI ส่งข้อมูลทีละ 1 bit ต่อ 1 clock cycle ดังนั้น <strong>1 byte (8 bits) = 8 clock cycles</strong> โดยส่งแบบ MSB-first (เริ่มจากบิตที่มีค่ามากที่สุด)
+                            </div>
+                        </div>
                     </div>
 
                     <div class="quiz-navigation">
                         <button id="prev-question" class="btn-secondary" disabled>⬅️ ข้อก่อนหน้า</button>
-                        <span id="question-number">คำถาม 1/8</span>
+                        <span id="question-number">คำถาม 1/10</span>
                         <button id="next-question" class="btn-secondary" disabled>ข้อถัดไป ➡️</button>
                     </div>
 
@@ -640,7 +674,7 @@ void loop() {
                             <div class="result-name">👤 <span id="result-name"></span></div>
                             <div class="result-score">
                                 <span class="score-number" id="final-score">0</span>
-                                <span class="score-total">/8</span>
+                                <span class="score-total">/10</span>
                             </div>
                             <div class="result-percent" id="result-percent"></div>
                             <div class="result-grade" id="result-grade"></div>

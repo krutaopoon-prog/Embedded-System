@@ -9,7 +9,7 @@ class PracticeMode {
     constructor() {
         this.studentName = '';
         this.currentQuestion = 1;
-        this.totalQuestions = 8;
+        this.totalQuestions = 10;
         this.score = 0;
         this.answered = {};
         this.matchingState = {
