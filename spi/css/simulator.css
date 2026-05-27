@@ -679,6 +679,122 @@
     color: var(--text-muted);
 }
 
+/* ===== Name Entry Screen ===== */
+.name-entry {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 2rem;
+}
+
+.name-entry.hidden {
+    display: none;
+}
+
+.name-entry-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 480px;
+    width: 100%;
+}
+
+.name-entry-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.name-entry-card h2 {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.4rem;
+}
+
+.name-entry-card > p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.name-input-group {
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.name-input-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.name-input-group input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.name-input-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.btn-large {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.btn-large:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.name-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+}
+
+/* ===== Quiz Area ===== */
+.quiz-area.hidden {
+    display: none;
+}
+
+.quiz-header-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.student-name-display {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.95rem;
+    background: #eff6ff;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+}
+
+/* ===== Question Tags ===== */
+.question-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #7c3aed;
+    background: #f5f3ff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+}
+
 /* ===== Quiz Complete Screen ===== */
 .quiz-complete {
     text-align: center;
@@ -700,13 +816,54 @@
 
 .quiz-complete h2 {
     color: var(--text-color);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.quiz-complete p {
-    font-size: 1.25rem;
+/* ===== Result Card ===== */
+.result-card {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 2px solid #93c5fd;
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 1.5rem auto;
+    max-width: 380px;
+}
+
+.result-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #bfdbfe;
+}
+
+.result-score {
+    margin-bottom: 0.5rem;
+}
+
+.result-score .score-number {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.result-score .score-total {
+    font-size: 1.5rem;
     color: var(--text-muted);
-    margin-bottom: 1.5rem;
+}
+
+.result-percent {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.result-grade {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.5rem;
 }
 
 #final-score {

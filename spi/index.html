@@ -457,201 +457,196 @@ void loop() {
         <!-- Practice Mode -->
         <section id="practice-mode" class="mode-section">
             <div class="practice-container">
-                <div class="quiz-header">
-                    <h2>📝 แบบทดสอบความเข้าใจ SPI</h2>
-                    <div class="score-display">คะแนน: <span id="score">0</span>/10</div>
+
+                <!-- Name Entry Screen -->
+                <div class="name-entry" id="name-entry">
+                    <div class="name-entry-card">
+                        <div class="name-entry-icon">📝</div>
+                        <h2>แบบทดสอบความเข้าใจ SPI Protocol</h2>
+                        <p>ทดสอบความรู้จากเนื้อหาทฤษฎีที่เรียนมา (8 ข้อ)</p>
+                        <div class="name-input-group">
+                            <label for="student-name">กรอกชื่อ-นามสกุล:</label>
+                            <input type="text" id="student-name" placeholder="เช่น สมชาย ใจดี" maxlength="50" autocomplete="off">
+                        </div>
+                        <button id="btn-start-quiz" class="btn-primary btn-large" disabled>เริ่มทำแบบทดสอบ →</button>
+                        <p class="name-hint">* กรุณากรอกชื่อก่อนเริ่มทำแบบทดสอบ</p>
+                    </div>
                 </div>
 
-                <div class="quiz-content" id="quiz-content">
-                    <!-- Quiz Question 1 -->
-                    <div class="quiz-question active" data-question="1">
-                        <div class="question-text">
-                            <h3>คำถามที่ 1: สายสัญญาณใดเป็นสายข้อมูลจาก Master ไป Slave?</h3>
-                        </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="true">MOSI</button>
-                            <button class="answer-btn" data-correct="false">MISO</button>
-                            <button class="answer-btn" data-correct="false">SCLK</button>
-                            <button class="answer-btn" data-correct="false">SS</button>
-                        </div>
-                        <div class="question-explanation hidden">
-                            ✅ <strong>MOSI</strong> ย่อมาจาก Master Out Slave In - เป็นสายข้อมูลที่ Master ส่งไปยัง Slave
+                <!-- Quiz Area (hidden until name entered) -->
+                <div class="quiz-area hidden" id="quiz-area">
+                    <div class="quiz-header">
+                        <h2>📝 แบบทดสอบความเข้าใจ SPI</h2>
+                        <div class="quiz-header-info">
+                            <span class="student-name-display" id="student-name-display"></span>
+                            <div class="score-display">คะแนน: <span id="score">0</span>/8</div>
                         </div>
                     </div>
 
-                    <!-- Quiz Question 2 -->
-                    <div class="quiz-question" data-question="2">
-                        <div class="question-text">
-                            <h3>คำถามที่ 2: สายสัญญาณใดใช้สำหรับเลือกอุปกรณ์ Slave ที่จะสื่อสาร?</h3>
-                        </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="false">MOSI</button>
-                            <button class="answer-btn" data-correct="false">MISO</button>
-                            <button class="answer-btn" data-correct="false">SCLK</button>
-                            <button class="answer-btn" data-correct="true">SS (Slave Select)</button>
-                        </div>
-                        <div class="question-explanation hidden">
-                            ✅ <strong>SS (Slave Select)</strong> หรือ CS (Chip Select) ใช้สำหรับเลือก Slave ที่ Master ต้องการสื่อสารด้วย (Active LOW)
-                        </div>
-                    </div>
-
-                    <!-- Quiz Question 3 -->
-                    <div class="quiz-question" data-question="3">
-                        <div class="question-text">
-                            <h3>คำถามที่ 3: การสื่อสาร SPI เป็นแบบใด?</h3>
-                        </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="false">Half-Duplex (ส่งหรือรับทีละอย่าง)</button>
-                            <button class="answer-btn" data-correct="true">Full-Duplex (ส่งและรับพร้อมกัน)</button>
-                            <button class="answer-btn" data-correct="false">Simplex (ส่งอย่างเดียว)</button>
-                            <button class="answer-btn" data-correct="false">Multi-Duplex (หลายอุปกรณ์พร้อมกัน)</button>
-                        </div>
-                        <div class="question-explanation hidden">
-                            ✅ SPI เป็น <strong>Full-Duplex</strong> - สามารถส่งข้อมูลผ่าน MOSI และรับข้อมูลผ่าน MISO พร้อมกันในแต่ละ clock cycle
-                        </div>
-                    </div>
-
-                    <!-- Quiz Question 4 - Matching -->
-                    <div class="quiz-question" data-question="4">
-                        <div class="question-text">
-                            <h3>คำถามที่ 4: จับคู่สายสัญญาณกับหน้าที่ให้ถูกต้อง</h3>
-                        </div>
-                        <div class="matching-game">
-                            <div class="matching-column">
-                                <div class="match-item" data-match="sclk">SCLK</div>
-                                <div class="match-item" data-match="mosi">MOSI</div>
-                                <div class="match-item" data-match="miso">MISO</div>
+                    <div class="quiz-content" id="quiz-content">
+                        <!-- Q1: SPI คืออะไร (ทฤษฎี Section 1) -->
+                        <div class="quiz-question active" data-question="1">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: SPI คืออะไร?</span>
+                                <h3>คำถามที่ 1: SPI เป็นการสื่อสารแบบใด?</h3>
                             </div>
-                            <div class="matching-column">
-                                <div class="match-target" data-target="mosi">ส่งข้อมูล Master→Slave</div>
-                                <div class="match-target" data-target="sclk">สัญญาณนาฬิกา</div>
-                                <div class="match-target" data-target="miso">รับข้อมูล Slave→Master</div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">Asynchronous Serial (ไม่ต้องใช้สัญญาณนาฬิกา)</button>
+                                <button class="answer-btn" data-correct="true">Synchronous Serial (ใช้สัญญาณนาฬิกาควบคุมจังหวะ)</button>
+                                <button class="answer-btn" data-correct="false">Parallel (ส่งหลายบิตพร้อมกัน)</button>
+                                <button class="answer-btn" data-correct="false">Wireless (ไร้สาย)</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ SPI เป็น <strong>Synchronous Serial</strong> — ใช้สัญญาณนาฬิกา (SCLK) ควบคุมจังหวะการส่งข้อมูลทีละบิต
                             </div>
                         </div>
-                        <div class="question-explanation hidden">
-                            ✅ SCLK = นาฬิกา, MOSI = Master ส่งให้ Slave, MISO = Master รับจาก Slave
-                        </div>
-                    </div>
 
-                    <!-- Quiz Question 5 - Mode Selection -->
-                    <div class="quiz-question" data-question="5">
-                        <div class="question-text">
-                            <h3>คำถามที่ 5: ถ้าต้องการให้ SCLK เริ่มต้นที่ LOW และอ่านข้อมูลที่ rising edge ควรใช้โหมดใด?</h3>
+                        <!-- Q2: สายสัญญาณ MOSI (ทฤษฎี Section 3) -->
+                        <div class="quiz-question" data-question="2">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: สายสัญญาณ 4 เส้น</span>
+                                <h3>คำถามที่ 2: สายสัญญาณใดเป็นสายข้อมูลจาก Master ไป Slave?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="true">MOSI (Master Out Slave In)</button>
+                                <button class="answer-btn" data-correct="false">MISO (Master In Slave Out)</button>
+                                <button class="answer-btn" data-correct="false">SCLK (Serial Clock)</button>
+                                <button class="answer-btn" data-correct="false">SS (Slave Select)</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ <strong>MOSI</strong> = Master Out Slave In — สายข้อมูลจาก Master ส่งไปยัง Slave (เหมือนสายส่งจากเจ้านายไปลูกน้อง)
+                            </div>
                         </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="true">Mode 0 (CPOL=0, CPHA=0)</button>
-                            <button class="answer-btn" data-correct="false">Mode 1 (CPOL=0, CPHA=1)</button>
-                            <button class="answer-btn" data-correct="false">Mode 2 (CPOL=1, CPHA=0)</button>
-                            <button class="answer-btn" data-correct="false">Mode 3 (CPOL=1, CPHA=1)</button>
-                        </div>
-                        <div class="question-explanation hidden">
-                            ✅ <strong>Mode 0</strong>: CPOL=0 (SCLK เริ่ม LOW), CPHA=0 (อ่านที่ rising edge)
-                        </div>
-                    </div>
 
-                    <!-- Quiz Question 6 - Waveform -->
-                    <div class="quiz-question" data-question="6">
-                        <div class="question-text">
-                            <h3>คำถามที่ 6: จาก waveform นี้ ข้อมูลที่ส่งคือค่าใด? (LSB first)</h3>
-                            <div class="waveform-quiz">
-                                <div class="waveform-row">
-                                    <span class="wf-label">SCLK:</span>
-                                    <span class="wf-bits">⎽⎽⎺⎺⎽⎽⎺⎺⎽⎽⎺⎺⎽⎽⎺⎺</span>
+                        <!-- Q3: SS/CS (ทฤษฎี Section 3) -->
+                        <div class="quiz-question" data-question="3">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: สายสัญญาณ SS</span>
+                                <h3>คำถามที่ 3: สัญญาณ SS ต้องเป็นอย่างไรเมื่อ Master ต้องการเลือก Slave?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">HIGH (3.3V/5V)</button>
+                                <button class="answer-btn" data-correct="true">LOW (0V) — Active LOW</button>
+                                <button class="answer-btn" data-correct="false">Toggle สลับไปมา</button>
+                                <button class="answer-btn" data-correct="false">ไม่ต้องสนใจค่า SS</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ SS เป็น <strong>Active LOW</strong> — เมื่อ SS = LOW หมายถึง "เลือก Slave นี้", SS = HIGH หมายถึง "ไม่เลือก"
+                            </div>
+                        </div>
+
+                        <!-- Q4: Full-Duplex (ทฤษฎี Section 1 + 6) -->
+                        <div class="quiz-question" data-question="4">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Full-Duplex</span>
+                                <h3>คำถามที่ 4: "Full-Duplex" ในการสื่อสาร SPI หมายถึงอะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">ส่งข้อมูลได้ทางเดียวเท่านั้น</button>
+                                <button class="answer-btn" data-correct="false">ส่งหรือรับได้ทีละอย่าง (ผลัดกัน)</button>
+                                <button class="answer-btn" data-correct="true">ส่งและรับข้อมูลพร้อมกันได้ในเวลาเดียวกัน</button>
+                                <button class="answer-btn" data-correct="false">ส่งข้อมูลไปหลายอุปกรณ์พร้อมกัน</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ <strong>Full-Duplex</strong> = ส่ง (MOSI) และรับ (MISO) ข้อมูลพร้อมกันในทุก clock cycle — เหมือนคุยโทรศัพท์ที่ทั้งสองฝ่ายพูดและฟังได้พร้อมกัน
+                            </div>
+                        </div>
+
+                        <!-- Q5: จับคู่สายสัญญาณ (ทฤษฎี Section 3) -->
+                        <div class="quiz-question" data-question="5">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: สายสัญญาณ 4 เส้น</span>
+                                <h3>คำถามที่ 5: จับคู่สายสัญญาณกับหน้าที่ให้ถูกต้อง</h3>
+                            </div>
+                            <div class="matching-game">
+                                <div class="matching-column">
+                                    <div class="match-item" data-match="sclk">SCLK</div>
+                                    <div class="match-item" data-match="mosi">MOSI</div>
+                                    <div class="match-item" data-match="miso">MISO</div>
                                 </div>
-                                <div class="waveform-row">
-                                    <span class="wf-label">MOSI:</span>
-                                    <span class="wf-bits">⎽⎽⎽⎽⎺⎺⎺⎺⎽⎽⎽⎽⎺⎺⎺⎺</span>
+                                <div class="matching-column">
+                                    <div class="match-target" data-target="mosi">ส่งข้อมูล Master → Slave</div>
+                                    <div class="match-target" data-target="sclk">สัญญาณนาฬิกา</div>
+                                    <div class="match-target" data-target="miso">ส่งข้อมูล Slave → Master</div>
                                 </div>
-                                <div class="bit-indices">0  1  2  3  4  5  6  7</div>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ SCLK = สัญญาณนาฬิกา, MOSI = Master ส่งข้อมูลไป Slave, MISO = Slave ส่งข้อมูลกลับ Master
                             </div>
                         </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="false">0x0F (00001111)</button>
-                            <button class="answer-btn" data-correct="true">0x33 (00110011)</button>
-                            <button class="answer-btn" data-correct="false">0xCC (11001100)</button>
-                            <button class="answer-btn" data-correct="false">0xF0 (11110000)</button>
+
+                        <!-- Q6: Rising Edge (ทฤษฎี Section 4) -->
+                        <div class="quiz-question" data-question="6">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Rising Edge / Falling Edge</span>
+                                <h3>คำถามที่ 6: "Rising Edge" ของสัญญาณนาฬิกาคืออะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="true">สัญญาณเปลี่ยนจาก LOW → HIGH (ขาขึ้น)</button>
+                                <button class="answer-btn" data-correct="false">สัญญาณเปลี่ยนจาก HIGH → LOW (ขาลง)</button>
+                                <button class="answer-btn" data-correct="false">สัญญาณอยู่ที่ HIGH คงที่</button>
+                                <button class="answer-btn" data-correct="false">สัญญาณอยู่ที่ LOW คงที่</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ <strong>Rising Edge (ขาขึ้น)</strong> = สัญญาณเปลี่ยนจาก LOW → HIGH — เหมือนขึ้นบันไดจากพื้นไปชั้นบน ใน Mode 0 และ 3 จะอ่านข้อมูลที่ Rising Edge
+                            </div>
                         </div>
-                        <div class="question-explanation hidden">
-                            ✅ ข้อมูลที่ rising edge: บิต 0=0, 1=0, 2=1, 3=1, 4=0, 5=0, 6=1, 7=1 = 00110011 (0x33)
+
+                        <!-- Q7: SPI Mode 0 (ทฤษฎี Section 5) -->
+                        <div class="quiz-question" data-question="7">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: SPI Modes (CPOL & CPHA)</span>
+                                <h3>คำถามที่ 7: SPI Mode 0 มีค่า CPOL และ CPHA เท่าใด?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="true">CPOL=0, CPHA=0 (เริ่มที่ LOW, อ่านที่ Rising Edge)</button>
+                                <button class="answer-btn" data-correct="false">CPOL=0, CPHA=1 (เริ่มที่ LOW, อ่านที่ Falling Edge)</button>
+                                <button class="answer-btn" data-correct="false">CPOL=1, CPHA=0 (เริ่มที่ HIGH, อ่านที่ Falling Edge)</button>
+                                <button class="answer-btn" data-correct="false">CPOL=1, CPHA=1 (เริ่มที่ HIGH, อ่านที่ Rising Edge)</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ <strong>Mode 0</strong>: CPOL=0 (SCLK เริ่มที่ LOW), CPHA=0 (อ่านข้อมูลที่ Rising Edge) — เป็นโหมดที่ใช้งานบ่อยที่สุด
+                            </div>
+                        </div>
+
+                        <!-- Q8: ขั้นตอนการส่งข้อมูล (ทฤษฎี Section 6) -->
+                        <div class="quiz-question" data-question="8">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: ขั้นตอนการส่งข้อมูล</span>
+                                <h3>คำถามที่ 8: ขั้นตอนแรกของการส่งข้อมูล SPI คืออะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">เริ่มสร้างสัญญาณ SCLK</button>
+                                <button class="answer-btn" data-correct="false">ส่งข้อมูลบิตแรกผ่าน MOSI</button>
+                                <button class="answer-btn" data-correct="true">Master ส่ง SS = LOW เพื่อเลือก Slave</button>
+                                <button class="answer-btn" data-correct="false">Slave ส่งข้อมูลกลับผ่าน MISO</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ ขั้นตอนแรกคือ <strong>Master ส่ง SS = LOW</strong> เพื่อเลือก Slave ที่ต้องการสื่อสาร — บอก Slave ว่า "เดี๋ยวจะคุยกับนายนะ"
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Quiz Question 7 - Timing -->
-                    <div class="quiz-question" data-question="7">
-                        <div class="question-text">
-                            <h3>คำถามที่ 7: สัญญาณ SS ต้องเป็นอย่างไรก่อนเริ่มส่งข้อมูล?</h3>
-                        </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="false">HIGH</button>
-                            <button class="answer-btn" data-correct="true">LOW</button>
-                            <button class="answer-btn" data-correct="false">Toggle (สลับ)</button>
-                            <button class="answer-btn" data-correct="false">ไม่สนใจค่า SS</button>
-                        </div>
-                        <div class="question-explanation hidden">
-                            ✅ SS เป็น <strong>Active LOW</strong> - ต้องเป็น LOW เพื่อเลือก Slave ที่ต้องการสื่อสาร
-                        </div>
+                    <div class="quiz-navigation">
+                        <button id="prev-question" class="btn-secondary" disabled>⬅️ ข้อก่อนหน้า</button>
+                        <span id="question-number">คำถาม 1/8</span>
+                        <button id="next-question" class="btn-secondary" disabled>ข้อถัดไป ➡️</button>
                     </div>
 
-                    <!-- Quiz Question 8 - Data Rate -->
-                    <div class="quiz-question" data-question="8">
-                        <div class="question-text">
-                            <h3>คำถามที่ 8: ถ้า SCLK ความถี่ 1 MHz จะใช้เวลาส่ง 1 byte นานเท่าใด?</h3>
+                    <div class="quiz-complete hidden" id="quiz-complete">
+                        <div class="trophy">🏆</div>
+                        <h2>ทำแบบทดสอบเสร็จแล้ว!</h2>
+                        <div class="result-card">
+                            <div class="result-name">👤 <span id="result-name"></span></div>
+                            <div class="result-score">
+                                <span class="score-number" id="final-score">0</span>
+                                <span class="score-total">/8</span>
+                            </div>
+                            <div class="result-percent" id="result-percent"></div>
+                            <div class="result-grade" id="result-grade"></div>
                         </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="false">1 ไมโครวินาที</button>
-                            <button class="answer-btn" data-correct="true">8 ไมโครวินาที</button>
-                            <button class="answer-btn" data-correct="false">1 มิลลิวินาที</button>
-                            <button class="answer-btn" data-correct="false">8 มิลลิวินาที</button>
-                        </div>
-                        <div class="question-explanation hidden">
-                            ✅ 1 byte = 8 bits, 1 MHz = 1 bit/ไมโครวินาที ดังนั้น 8 bits = 8 ไมโครวินาที
-                        </div>
+                        <button id="restart-quiz" class="btn-primary">🔄 ทำแบบทดสอบใหม่</button>
                     </div>
-
-                    <!-- Quiz Question 9 - Multiple Slaves -->
-                    <div class="quiz-question" data-question="9">
-                        <div class="question-text">
-                            <h3>คำถามที่ 9: ถ้ามีหลาย Slave ต้องใช้สายสัญญาณเพิ่มอะไร?</h3>
-                        </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="false">MOSI เพิ่มอีกเส้น</button>
-                            <button class="answer-btn" data-correct="true">SS/CS แยกสำหรับแต่ละ Slave</button>
-                            <button class="answer-btn" data-correct="false">SCLK เพิ่มอีกเส้น</button>
-                            <button class="answer-btn" data-correct="false">ไม่ต้องเพิ่มสายสัญญาณ</button>
-                        </div>
-                        <div class="question-explanation hidden">
-                            ✅ ต้องมี <strong>SS/CS แยกสำหรับแต่ละ Slave</strong> แต่ MOSI, MISO, SCLK ใช้ร่วมกันได้
-                        </div>
-                    </div>
-
-                    <!-- Quiz Question 10 - Complete -->
-                    <div class="quiz-question" data-question="10">
-                        <div class="question-text">
-                            <h3>คำถามที่ 10: ข้อใดเป็นข้อดีของ SPI เมื่อเทียบกับ I2C?</h3>
-                        </div>
-                        <div class="answer-options">
-                            <button class="answer-btn" data-correct="false">ใช้สายสัญญาณน้อยกว่า</button>
-                            <button class="answer-btn" data-correct="true">ความเร็วสูงกว่า และ Full-Duplex</button>
-                            <button class="answer-btn" data-correct="false">รองรับอุปกรณ์ได้มากกว่า</button>
-                            <button class="answer-btn" data-correct="false">ไม่ต้องกำหนด Address</button>
-                        </div>
-                        <div class="question-explanation hidden">
-                            ✅ SPI เร็วกว่าและเป็น Full-Duplex แต่ใช้สายมากกว่า I2C
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quiz-navigation">
-                    <button id="prev-question" class="btn-secondary" disabled>⬅️ ข้อก่อนหน้า</button>
-                    <span id="question-number">คำถาม 1/10</span>
-                    <button id="next-question" class="btn-secondary" disabled>ข้อถัดไป ➡️</button>
-                </div>
-
-                <div class="quiz-complete hidden" id="quiz-complete">
-                    <div class="trophy">🏆</div>
-                    <h2>ยินดีด้วย! ทำแบบทดสอบเสร็จแล้ว</h2>
-                    <p>คะแนนของคุณ: <span id="final-score">0</span>/10</p>
-                    <button id="restart-quiz" class="btn-primary">🔄 เริ่มใหม่</button>
                 </div>
             </div>
         </section>
