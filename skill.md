@@ -12,7 +12,7 @@
 
 ---
 
-## � Current File Structure
+## 📂 Current File Structure
 
 ```
 embedded-system/
@@ -22,17 +22,25 @@ embedded-system/
 │
 ├── spi/                    # ✅ SPI Protocol (DONE)
 │   ├── index.html          # Theory + Simulator + Quiz (single page)
+│   ├── multi-slave.html    # Multi-Slave SPI Simulator (separate page)
+│   ├── full-duplex.html    # Full-Duplex SPI Simulator (separate page)
 │   ├── README.md
+│   ├── multi-slave.png     # Multi-slave block diagram image
+│   ├── SPI-interface-temp.png
 │   ├── css/
 │   │   ├── base.css        # Variables, Reset, Header, Footer, Responsive
 │   │   ├── theory.css      # Theory section styles
-│   │   └── simulator.css   # Simulator + Quiz styles
+│   │   ├── simulator.css   # Simulator + Quiz + Name Entry styles
+│   │   ├── multi-slave.css # Multi-Slave simulator styles
+│   │   └── full-duplex.css # Full-Duplex simulator + waveform styles
 │   ├── js/
 │   │   ├── spi-engine.js   # SPI protocol logic (modes 0 & 3)
 │   │   ├── animation.js    # Canvas oscilloscope + SVG diagram
 │   │   ├── learning-mode.js# Learning mode controller + theory toggle
-│   │   ├── practice-mode.js# Quiz controller (10 questions)
-│   │   └── app.js          # Main entry - mode switching
+│   │   ├── practice-mode.js# Quiz controller (name entry + 10 questions + result)
+│   │   ├── app.js          # Main entry - mode switching
+│   │   ├── multi-slave.js  # Multi-Slave simulator logic
+│   │   └── full-duplex.js  # Full-Duplex simulator + waveform drawing
 │   └── assets/             # (empty - for future images)
 │
 └── uart/                   # 🔜 UART Protocol (PLANNED)
@@ -42,16 +50,29 @@ embedded-system/
 
 ## ⚡ Quick Reference - What Each File Does
 
+### Main SPI Page (`spi/index.html`)
 | File | Role |
 |------|------|
 | `base.css` | CSS variables, reset, header/footer, responsive breakpoints |
 | `theory.css` | `.theory-block`, `.term-box`, `.signal-detail`, `.process-list`, tables, references |
-| `simulator.css` | Connection diagram, oscilloscope, controls, buttons, quiz, matching game |
+| `simulator.css` | Connection diagram, oscilloscope, controls, quiz, name entry, result card |
 | `spi-engine.js` | SPI state machine: `start()`, `step()`, `reset()`, modes 0/3 |
 | `animation.js` | Canvas waveform drawing, SVG signal lines, UI updates |
 | `learning-mode.js` | Init, event listeners, theory toggle, code tabs, SPI callbacks |
-| `practice-mode.js` | Quiz questions, scoring, matching game, waveform quiz |
+| `practice-mode.js` | Name entry → 10 quiz questions → result (name + score + grade) |
 | `app.js` | Mode switching (learning ↔ practice), main init |
+
+### Multi-Slave Simulator (`spi/multi-slave.html`)
+| File | Role |
+|------|------|
+| `multi-slave.css` | Layout, device boxes, SVG signal lines, control panel, log |
+| `multi-slave.js` | Slave selection, data transmission animation, signal line updates |
+
+### Full-Duplex Simulator (`spi/full-duplex.html`)
+| File | Role |
+|------|------|
+| `full-duplex.css` | Layout, arrow lines, bit display, waveform panel styles |
+| `full-duplex.js` | Simultaneous MOSI+MISO transfer, canvas waveform (SS/SCLK/MOSI/MISO) |
 
 ---
 
@@ -59,13 +80,14 @@ embedded-system/
 
 1. **Theory Section** - Read before simulation (with references)
 2. **Interactive Learning Mode** - Animation + step-by-step
-3. **Practice Quiz** - 10 questions with Thai explanations
+3. **Practice Quiz** - Name entry → 10 questions (matched to theory) → Result (name + score + grade)
 4. **Responsive Design** - Desktop, Tablet, Mobile
 5. **Web-based** - No installation, browser only
 
 **Optional (protocol-dependent):**
-- Oscilloscope View (signal visualization)
+- Oscilloscope/Waveform View (signal visualization on canvas)
 - Arduino Code Examples
+- Sub-Simulators (Multi-Slave, Full-Duplex, etc.)
 
 ---
 
@@ -127,7 +149,34 @@ class LearningMode {
 
 ### Mode Pattern
 - **Learning Mode:** Visual step-by-step with explanations
-- **Practice Mode:** Interactive quiz with scoring
+- **Practice Mode:** Name entry → Quiz (10 questions matched to theory) → Result card
+
+### Quiz Flow (Practice Mode)
+```
+1. Name Entry Screen (input name → enable start button)
+2. Quiz Questions (10 questions, each tagged with theory section)
+   - Multiple choice (4 options)
+   - Matching game (drag pairs)
+3. Result Screen:
+   - Student name
+   - Score (e.g. 8/10)
+   - Percentage (80%)
+   - Grade: ≥80% Excellent, ≥60% Good, ≥40% Fair, <40% Needs improvement
+4. Restart → back to Name Entry
+```
+
+### Sub-Simulator Pattern (separate HTML pages)
+```javascript
+class FullDuplexSPI {
+    constructor() { /* init DOM + canvas + state */ }
+    startTransfer() { /* begin simulation */ }
+    stepOnce() { /* advance 1 bit */ }
+    finishTransfer() { /* complete + show summary */ }
+    reset() { /* reset all state + waveform */ }
+    drawWaveform(upToBit) { /* render canvas signals */ }
+}
+// Instantiate on DOMContentLoaded
+```
 
 ---
 
@@ -262,4 +311,4 @@ function toggleTheory() {
 ---
 
 **Last Updated:** May 27, 2026  
-**Status:** SPI Complete | CSS Refactored (3 files)
+**Status:** SPI Complete (Main + Multi-Slave + Full-Duplex + Waveform + Quiz with Name Entry)
