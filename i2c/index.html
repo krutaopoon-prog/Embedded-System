@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>I2C Simulator - จำลองการทำงาน I2C Protocol</title>
+    <link rel="stylesheet" href="css/base.css?v=1.0">
+    <link rel="stylesheet" href="css/theory.css?v=1.0">
+    <link rel="stylesheet" href="css/simulator.css?v=1.0">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🔄 I2C Simulator</h1>
+            <p>จำลองการทำงานของ Inter-Integrated Circuit (I²C) สำหรับนักเรียน ปวส.</p>
+            <div class="mode-switcher">
+                <button class="mode-btn active" data-mode="learning-mode">📚 โหมดเรียนรู้</button>
+                <button class="mode-btn" data-mode="practice-mode">📝 โหมดทดสอบ</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Theory Section -->
+        <div class="theory-section">
+            <div class="theory-header">
+                <h2>📖 ทฤษฎีก่อนใช้ Simulator</h2>
+                <button class="toggle-theory" id="toggle-theory" onclick="toggleTheory()">ซ่อนเนื้อหา</button>
+            </div>
+            <div class="theory-content" id="theory-content">
+                <!-- Section 1: I2C คืออะไร -->
+                <div class="theory-block">
+                    <h3>🔄 Section 1: I2C คืออะไร?</h3>
+                    <div class="term-box">
+                        <h4>📘 I2C - Inter-Integrated Circuit</h4>
+                        <ul>
+                            <li><strong>ความหมาย:</strong> บัสสื่อสารแบบ <strong>Synchronous Serial</strong> ที่ใช้สายเพียง <strong>2 เส้น</strong> เชื่อมต่ออุปกรณ์ได้หลายตัวพร้อมกัน</li>
+                            <li><strong>ผู้คิดค้น:</strong> Philips Semiconductor (ปัจจุบัน NXP) ในปี 1982</li>
+                            <li><strong>เปรียบเทียบง่ายๆ:</strong> เหมือนห้องเรียนที่มีครู 1 คน (Master) พูดกับนักเรียนหลายคน (Slave) โดยเรียกชื่อ (Address) ก่อนพูด</li>
+                            <li><strong>ตัวอย่างการใช้งาน:</strong> จอ OLED, เซนเซอร์ BME280, EEPROM, RTC Module</li>
+                        </ul>
+                    </div>
+                    <p class="highlight">💡 <strong>I2C vs SPI vs UART:</strong> I2C ใช้สายน้อย (2 เส้น) ต่อได้หลายอุปกรณ์ แต่ช้ากว่า SPI | SPI เร็วแต่ใช้สายเยอะ | UART ต่อได้แค่ 2 อุปกรณ์</p>
+                </div>
+
+                <!-- Section 2: สายสัญญาณ I2C -->
+                <div class="theory-block">
+                    <h3>🔌 Section 2: สายสัญญาณ I2C (2 เส้น)</h3>
+                    <p>I2C ใช้สายเพียง <strong>2 เส้น</strong> ในการสื่อสาร (ไม่นับ GND และ VCC):</p>
+
+                    <div class="signal-detail">
+                        <h4>🟣 SDA - Serial Data (สายข้อมูล)</h4>
+                        <ul>
+                            <li><strong>หน้าที่:</strong> ส่ง-รับข้อมูลแบบ <strong>bidirectional</strong> (สองทิศทาง)</li>
+                            <li><strong>เปรียบเทียบ:</strong> เหมือนกระดาน whiteboard ที่ทั้งครูและนักเรียนเขียนได้</li>
+                            <li><strong>ลักษณะ:</strong> Open-drain — ต้องมี <strong>Pull-up Resistor</strong> ดึงขึ้น VCC</li>
+                        </ul>
+                    </div>
+
+                    <div class="signal-detail">
+                        <h4>🟡 SCL - Serial Clock (สายนาฬิกา)</h4>
+                        <ul>
+                            <li><strong>หน้าที่:</strong> สร้างจังหวะ (Clock) ให้ทั้งสองฝ่ายอ่านข้อมูลตรงกัน</li>
+                            <li><strong>ผู้สร้าง:</strong> Master เป็นคนสร้าง Clock เสมอ</li>
+                            <li><strong>เปรียบเทียบ:</strong> เหมือนจังหวะตบมือที่ครูตบ ทุกคนต้องทำตามจังหวะ</li>
+                        </ul>
+                    </div>
+
+                    <div class="term-box">
+                        <h4>📘 Pull-up Resistor คืออะไร?</h4>
+                        <ul>
+                            <li><strong>ทำไมต้องมี:</strong> SDA และ SCL เป็น Open-drain — ไม่สามารถดึงสายขึ้น HIGH ได้เอง</li>
+                            <li><strong>ค่าที่ใช้:</strong> 4.7kΩ หรือ 10kΩ ต่อจากสายไป VCC</li>
+                            <li><strong>หลักการ:</strong> สาย = HIGH (ปล่อย) ← Pull-up ดึงขึ้น | สาย = LOW (ดึงลง) ← อุปกรณ์ดึง</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight">⚡ <strong>ข้อดี 2 สาย:</strong> ต่ออุปกรณ์ได้ถึง 128 ตัว (7-bit address) บนบัสเดียวกัน! ประหยัดขาของ MCU มาก</p>
+                </div>
+
+                <!-- Section 3: Master และ Slave -->
+                <div class="theory-block">
+                    <h3>👥 Section 3: Master และ Slave</h3>
+                    <div class="term-box">
+                        <h4>📘 บทบาทของอุปกรณ์บน I2C Bus</h4>
+                        <ul>
+                            <li><strong>Master:</strong> ผู้ควบคุม — สร้าง Clock, เริ่มการสื่อสาร, เลือก Slave ด้วย Address</li>
+                            <li><strong>Slave:</strong> ผู้รอรับคำสั่ง — มี Address เฉพาะตัว, ตอบเมื่อถูกเรียก</li>
+                        </ul>
+                    </div>
+
+                    <table class="mode-table">
+                        <thead>
+                            <tr>
+                                <th>คุณสมบัติ</th>
+                                <th>Master</th>
+                                <th>Slave</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>สร้าง Clock</td><td>✅ สร้างเอง</td><td>❌ ใช้ตามที่ Master ให้</td></tr>
+                            <tr><td>เริ่มการสื่อสาร</td><td>✅ เริ่มได้</td><td>❌ รอถูกเรียก</td></tr>
+                            <tr><td>มี Address</td><td>❌ ไม่ต้องมี</td><td>✅ มี 7-bit address</td></tr>
+                            <tr><td>จำนวนบนบัส</td><td>1 ตัว (ปกติ)</td><td>หลายตัว (สูงสุด 128)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p class="note">📝 <strong>Multi-Master:</strong> I2C รองรับหลาย Master ได้ แต่ในงานปวส. มักใช้ Single Master (Arduino 1 ตัว + Slave หลายตัว)</p>
+                </div>
+
+                <!-- Section 4: Address 7-bit -->
+                <div class="theory-block">
+                    <h3>📬 Section 4: Address ของ Slave (7-bit)</h3>
+                    <p>Slave แต่ละตัวมี <strong>Address เฉพาะ</strong> (เหมือนเลขที่บ้าน) — Master ต้องระบุ Address ก่อนจึงจะสื่อสารได้</p>
+
+                    <table class="mode-table">
+                        <thead>
+                            <tr>
+                                <th>อุปกรณ์</th>
+                                <th>Address (Hex)</th>
+                                <th>หน้าที่</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>OLED SSD1306</td><td>0x3C</td><td>จอแสดงผล</td></tr>
+                            <tr><td>BME280</td><td>0x76 / 0x77</td><td>วัดอุณหภูมิ ความชื้น ความดัน</td></tr>
+                            <tr><td>DS3231 RTC</td><td>0x68</td><td>นาฬิกาเวลาจริง</td></tr>
+                            <tr><td>EEPROM AT24C32</td><td>0x50-0x57</td><td>หน่วยความจำ</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p class="highlight">💡 <strong>7-bit = 2⁷ = 128 address</strong> — แต่บาง address ถูก reserve ไว้ ใช้งานจริงได้ประมาณ 112 ตัว</p>
+                </div>
+
+                <!-- Section 5: Data Frame -->
+                <div class="theory-block">
+                    <h3>📦 Section 5: โครงสร้าง Data Frame ของ I2C</h3>
+                    <p>การส่งข้อมูล 1 ครั้งใน I2C มีโครงสร้างดังนี้:</p>
+
+                    <table class="mode-table">
+                        <thead>
+                            <tr>
+                                <th>ส่วน</th>
+                                <th>จำนวนบิต</th>
+                                <th>หน้าที่</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Start Condition</strong></td><td>-</td><td>SDA: HIGH→LOW ขณะ SCL=HIGH (เริ่มสื่อสาร)</td></tr>
+                            <tr><td><strong>Address</strong></td><td>7 bits</td><td>ระบุว่าจะคุยกับ Slave ตัวไหน</td></tr>
+                            <tr><td><strong>R/W Bit</strong></td><td>1 bit</td><td>0 = Write (เขียน), 1 = Read (อ่าน)</td></tr>
+                            <tr><td><strong>ACK/NACK</strong></td><td>1 bit</td><td>Slave ตอบ 0 = "ได้รับแล้ว" (ACK)</td></tr>
+                            <tr><td><strong>Data</strong></td><td>8 bits</td><td>ข้อมูลจริงๆ ที่ต้องการส่ง</td></tr>
+                            <tr><td><strong>ACK/NACK</strong></td><td>1 bit</td><td>ฝ่ายรับตอบรับ</td></tr>
+                            <tr><td><strong>Stop Condition</strong></td><td>-</td><td>SDA: LOW→HIGH ขณะ SCL=HIGH (จบสื่อสาร)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="term-box">
+                        <h4>📘 Start & Stop Condition</h4>
+                        <ul>
+                            <li><strong>Start:</strong> SDA เปลี่ยนจาก HIGH→LOW <strong>ขณะที่</strong> SCL ยังเป็น HIGH</li>
+                            <li><strong>Stop:</strong> SDA เปลี่ยนจาก LOW→HIGH <strong>ขณะที่</strong> SCL เป็น HIGH</li>
+                            <li><strong>ปกติ:</strong> SDA จะเปลี่ยนได้เฉพาะตอน SCL = LOW เท่านั้น</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section 6: ACK/NACK -->
+                <div class="theory-block">
+                    <h3>✋ Section 6: ACK และ NACK</h3>
+                    <p>หลังส่งข้อมูลทุก 8 บิต (1 byte) ฝ่ายรับจะต้อง<strong>ตอบรับ</strong>:</p>
+
+                    <div class="term-box">
+                        <h4>📘 ACK vs NACK</h4>
+                        <ul>
+                            <li><strong>ACK (Acknowledge):</strong> ฝ่ายรับดึง SDA = LOW → "ได้รับแล้ว ส่งต่อได้"</li>
+                            <li><strong>NACK (Not Acknowledge):</strong> SDA ค้าง HIGH → "ไม่ได้รับ" หรือ "หยุดส่ง"</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight">⚠️ ถ้า Master ส่ง Address แล้วไม่มี Slave ตอบ ACK → แสดงว่าไม่มีอุปกรณ์อยู่ที่ Address นั้น (หรือสายหลุด)</p>
+                </div>
+
+                <!-- Section 7: ขั้นตอนการสื่อสาร -->
+                <div class="theory-block">
+                    <h3>📤 Section 7: ขั้นตอนการสื่อสาร I2C (Write)</h3>
+                    <ol class="process-list">
+                        <li>
+                            <strong>Master ส่ง Start Condition</strong>
+                            <p>SDA ดึงลง LOW ขณะ SCL ยัง HIGH — บอกทุกอุปกรณ์ว่า "เตรียมตัว!"</p>
+                        </li>
+                        <li>
+                            <strong>Master ส่ง Address (7-bit) + R/W bit</strong>
+                            <p>ระบุว่าจะคุยกับ Slave ตัวไหน + จะเขียน (0) หรืออ่าน (1)</p>
+                        </li>
+                        <li>
+                            <strong>Slave ตอบ ACK</strong>
+                            <p>Slave ที่มี Address ตรง ดึง SDA = LOW 1 bit → "ฉันอยู่ พร้อมรับ"</p>
+                        </li>
+                        <li>
+                            <strong>Master ส่ง Data (8-bit)</strong>
+                            <p>ส่งข้อมูลทีละ byte (8 bits, MSB first)</p>
+                        </li>
+                        <li>
+                            <strong>Slave ตอบ ACK อีกครั้ง</strong>
+                            <p>Slave ตอบว่า "ได้รับข้อมูลแล้ว"</p>
+                        </li>
+                        <li>
+                            <strong>Master ส่ง Stop Condition</strong>
+                            <p>SDA ดึงขึ้น HIGH ขณะ SCL = HIGH — "จบการสื่อสาร"</p>
+                        </li>
+                    </ol>
+
+                    <p class="highlight">⏱️ <strong>ความเร็ว I2C:</strong> Standard Mode = 100 kHz | Fast Mode = 400 kHz | High-speed = 3.4 MHz</p>
+                </div>
+
+                <div class="references">
+                    <h4>📚 แหล่งอ้างอิง</h4>
+                    <ul>
+                        <li>NXP Semiconductors - UM10204 I2C-bus specification and user manual</li>
+                        <li><a href="https://www.ti.com/lit/an/slva704/slva704.pdf" target="_blank">Texas Instruments - Understanding the I2C Bus</a></li>
+                        <li><a href="https://learn.sparkfun.com/tutorials/i2c" target="_blank">SparkFun - I2C Tutorial</a></li>
+                        <li><a href="https://docs.arduino.cc/learn/communication/wire/" target="_blank">Arduino - Wire Library (I2C)</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Mode -->
+        <section id="learning-mode" class="mode-section active">
+            <div class="simulator-container">
+                <h2>🎮 จำลองการสื่อสาร I2C</h2>
+
+                <!-- I2C Bus Diagram -->
+                <div class="i2c-bus-diagram">
+                    <div class="bus-lines">
+                        <div class="bus-line">
+                            <span class="line-name" style="color: #7c3aed;">SDA</span>
+                            <div class="line-wire sda"></div>
+                            <span class="line-state" id="sda-state">HIGH</span>
+                        </div>
+                        <div class="bus-line">
+                            <span class="line-name" style="color: #f59e0b;">SCL</span>
+                            <div class="line-wire scl"></div>
+                            <span class="line-state" id="scl-state">HIGH</span>
+                        </div>
+                    </div>
+                    <div class="devices-row">
+                        <div class="device-box active" id="master-box">
+                            <div class="device-icon">💻</div>
+                            <h4>Master</h4>
+                            <span class="device-addr">Arduino</span>
+                        </div>
+                        <div class="device-box" id="slave1-box">
+                            <div class="device-icon">📺</div>
+                            <h4>Slave 1</h4>
+                            <span class="device-addr">OLED 0x3C</span>
+                        </div>
+                        <div class="device-box" id="slave2-box">
+                            <div class="device-icon">🌡️</div>
+                            <h4>Slave 2</h4>
+                            <span class="device-addr">BME280 0x76</span>
+                        </div>
+                        <div class="device-box" id="slave3-box">
+                            <div class="device-icon">⏰</div>
+                            <h4>Slave 3</h4>
+                            <span class="device-addr">RTC 0x68</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Waveform -->
+                <div class="waveform-panel">
+                    <h3>📊 สัญญาณ I2C (Waveform)</h3>
+                    <canvas id="i2c-waveform" width="800" height="220"></canvas>
+                    <div class="waveform-legend">
+                        <div class="legend-item"><span class="color-dot" style="background: #7c3aed;"></span> SDA</div>
+                        <div class="legend-item"><span class="color-dot" style="background: #f59e0b;"></span> SCL</div>
+                        <div class="legend-item"><span class="color-dot" style="background: #22c55e;"></span> ACK</div>
+                    </div>
+                </div>
+
+                <!-- Frame Display -->
+                <div class="frame-display">
+                    <h3>📦 Data Frame</h3>
+                    <div class="frame-bits" id="frame-bits"></div>
+                    <div class="frame-labels" id="frame-labels"></div>
+                </div>
+
+                <!-- Control Panel -->
+                <div class="control-panel">
+                    <h3>🎛️ แผงควบคุม</h3>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Slave Address (Hex)</label>
+                            <select id="slave-addr">
+                                <option value="0x3C">0x3C (OLED)</option>
+                                <option value="0x76">0x76 (BME280)</option>
+                                <option value="0x68">0x68 (RTC)</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>R/W</label>
+                            <select id="rw-bit">
+                                <option value="0">Write (0)</option>
+                                <option value="1">Read (1)</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Data (Hex)</label>
+                            <input type="text" id="input-data" value="0x55" maxlength="4" style="width: 70px; text-align: center;">
+                        </div>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="btn-primary" id="btn-send">📤 ส่งข้อมูล</button>
+                        <button class="btn-primary" id="btn-step">⏭️ ทีละขั้น</button>
+                        <button class="btn-secondary" id="btn-reset">🔄 รีเซ็ต</button>
+                    </div>
+                </div>
+
+                <!-- Explanation -->
+                <div class="explanation-panel">
+                    <h3>💡 คำอธิบาย</h3>
+                    <div class="explanation-content" id="explanation">
+                        <p>เลือก Slave Address + ข้อมูลที่ต้องการส่ง แล้วกด <strong>"ส่งข้อมูล"</strong> เพื่อดูทั้งกระบวนการ หรือกด <strong>"ทีละขั้น"</strong> เพื่อดูทีละขั้นตอน</p>
+                        <p>สังเกต: Start → Address(7) + R/W(1) → ACK → Data(8) → ACK → Stop</p>
+                    </div>
+                </div>
+
+                <!-- Log -->
+                <div class="log-panel">
+                    <h3>📋 บันทึกการทำงาน</h3>
+                    <div class="log-content" id="log-content">
+                        <div class="log-entry">[Ready] I2C Simulator พร้อมใช้งาน</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Mode -->
+        <section id="practice-mode" class="mode-section">
+            <div class="practice-container">
+
+                <!-- Name Entry -->
+                <div class="name-entry" id="name-entry">
+                    <div class="name-entry-card">
+                        <div class="name-entry-icon">📝</div>
+                        <h2>แบบทดสอบความเข้าใจ I2C Protocol</h2>
+                        <p>ทดสอบความรู้จากเนื้อหาทฤษฎีที่เรียนมา (10 ข้อ)</p>
+                        <div class="name-input-group">
+                            <label for="student-name">กรอกชื่อ-นามสกุล:</label>
+                            <input type="text" id="student-name" placeholder="เช่น สมชาย ใจดี" maxlength="50" autocomplete="off">
+                        </div>
+                        <button id="btn-start-quiz" class="btn-primary btn-large" disabled>เริ่มทำแบบทดสอบ →</button>
+                        <p class="name-hint">* กรุณากรอกชื่อก่อนเริ่มทำแบบทดสอบ</p>
+                    </div>
+                </div>
+
+                <!-- Quiz Area -->
+                <div class="quiz-area hidden" id="quiz-area">
+                    <div class="quiz-header">
+                        <h2>📝 แบบทดสอบ I2C</h2>
+                        <div class="quiz-header-info">
+                            <span class="student-name-display" id="student-name-display"></span>
+                            <div class="score-display">คะแนน: <span id="score">0</span>/10</div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-content" id="quiz-content">
+                        <!-- Q1 -->
+                        <div class="quiz-question active" data-question="1">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: I2C คืออะไร?</span>
+                                <h3>คำถามที่ 1: I2C ใช้สายสัญญาณกี่เส้นในการสื่อสาร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">1 เส้น (Data อย่างเดียว)</button>
+                                <button class="answer-btn" data-correct="true">2 เส้น (SDA + SCL)</button>
+                                <button class="answer-btn" data-correct="false">4 เส้น (MOSI, MISO, SCLK, SS)</button>
+                                <button class="answer-btn" data-correct="false">3 เส้น (TX, RX, CLK)</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ I2C ใช้เพียง <strong>2 เส้น</strong> คือ SDA (Data) และ SCL (Clock) สามารถต่ออุปกรณ์ได้หลายตัวบนบัสเดียวกัน
+                            </div>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div class="quiz-question" data-question="2">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: สายสัญญาณ</span>
+                                <h3>คำถามที่ 2: ทำไมสาย SDA และ SCL ต้องมี Pull-up Resistor?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">เพื่อจำกัดกระแส ป้องกันไฟช็อต</button>
+                                <button class="answer-btn" data-correct="true">เพราะสายเป็น Open-drain ต้องมีตัวต้านทานดึงสายขึ้น HIGH</button>
+                                <button class="answer-btn" data-correct="false">เพื่อเพิ่มความเร็วในการสื่อสาร</button>
+                                <button class="answer-btn" data-correct="false">เพื่อลดสัญญาณรบกวน (Noise)</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ I2C ใช้ <strong>Open-drain</strong> — อุปกรณ์ดึงสายลง LOW ได้ แต่ปล่อยขึ้น HIGH ไม่ได้ ต้องมี Pull-up Resistor ดึงสายกลับ HIGH
+                            </div>
+                        </div>
+
+                        <!-- Q3 -->
+                        <div class="quiz-question" data-question="3">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Master/Slave</span>
+                                <h3>คำถามที่ 3: ใครเป็นผู้สร้างสัญญาณ Clock (SCL) ใน I2C?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="true">Master เท่านั้น</button>
+                                <button class="answer-btn" data-correct="false">Slave เท่านั้น</button>
+                                <button class="answer-btn" data-correct="false">ทั้ง Master และ Slave สลับกัน</button>
+                                <button class="answer-btn" data-correct="false">ไม่มี Clock — ใช้ Baud Rate แทน</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ <strong>Master</strong> เป็นผู้สร้างสัญญาณ Clock เสมอ ไม่ว่าจะเป็นการ Write หรือ Read — Slave ใช้ Clock ที่ Master ให้
+                            </div>
+                        </div>
+
+                        <!-- Q4 -->
+                        <div class="quiz-question" data-question="4">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Address</span>
+                                <h3>คำถามที่ 4: Slave Address ใน I2C มีขนาดกี่ bit?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">4 bit</button>
+                                <button class="answer-btn" data-correct="true">7 bit</button>
+                                <button class="answer-btn" data-correct="false">8 bit</button>
+                                <button class="answer-btn" data-correct="false">16 bit</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ Slave Address มีขนาด <strong>7 bit</strong> (2⁷ = 128 address) — ต่ออุปกรณ์ได้สูงสุด 112 ตัว (บาง address ถูก reserve)
+                            </div>
+                        </div>
+
+                        <!-- Q5 -->
+                        <div class="quiz-question" data-question="5">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Data Frame</span>
+                                <h3>คำถามที่ 5: Start Condition ของ I2C เกิดขึ้นอย่างไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">SCL เปลี่ยนจาก HIGH→LOW ขณะ SDA = HIGH</button>
+                                <button class="answer-btn" data-correct="true">SDA เปลี่ยนจาก HIGH→LOW ขณะ SCL = HIGH</button>
+                                <button class="answer-btn" data-correct="false">ทั้ง SDA และ SCL เปลี่ยนเป็น LOW พร้อมกัน</button>
+                                <button class="answer-btn" data-correct="false">ส่ง byte 0x00 ออกไปก่อน</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ Start Condition: <strong>SDA เปลี่ยนจาก HIGH→LOW ขณะที่ SCL ยังเป็น HIGH</strong> — นี่คือสัญญาณพิเศษที่ทุก Slave ต้องจับได้
+                            </div>
+                        </div>
+
+                        <!-- Q6 -->
+                        <div class="quiz-question" data-question="6">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: ACK/NACK</span>
+                                <h3>คำถามที่ 6: ACK (Acknowledge) หมายถึงอะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">Master ส่ง HIGH เพื่อบอกว่าส่งเสร็จ</button>
+                                <button class="answer-btn" data-correct="true">ฝ่ายรับดึง SDA = LOW เพื่อบอกว่า "ได้รับแล้ว"</button>
+                                <button class="answer-btn" data-correct="false">Slave ส่ง Address ตัวเองกลับไป</button>
+                                <button class="answer-btn" data-correct="false">Master หยุด Clock ชั่วคราว</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ ACK = ฝ่ายรับ (Slave) ดึง <strong>SDA = LOW</strong> ในช่วง Clock bit ที่ 9 → หมายความว่า "ได้รับข้อมูลเรียบร้อย ส่งต่อได้"
+                            </div>
+                        </div>
+
+                        <!-- Q7 -->
+                        <div class="quiz-question" data-question="7">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: Data Frame</span>
+                                <h3>คำถามที่ 7: R/W bit = 0 หมายถึงอะไร?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="true">Master ต้องการเขียนข้อมูลไปยัง Slave (Write)</button>
+                                <button class="answer-btn" data-correct="false">Master ต้องการอ่านข้อมูลจาก Slave (Read)</button>
+                                <button class="answer-btn" data-correct="false">ไม่มีข้อมูลที่จะส่ง</button>
+                                <button class="answer-btn" data-correct="false">Slave ปฏิเสธการสื่อสาร</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ R/W bit = <strong>0 = Write</strong> (Master จะเขียนข้อมูลไปหา Slave) | R/W bit = 1 = Read (Master จะอ่านจาก Slave)
+                            </div>
+                        </div>
+
+                        <!-- Q8 -->
+                        <div class="quiz-question" data-question="8">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: ขั้นตอนการสื่อสาร</span>
+                                <h3>คำถามที่ 8: ลำดับการสื่อสาร I2C (Write) ที่ถูกต้องคือข้อใด?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">Data → Address → Start → Stop</button>
+                                <button class="answer-btn" data-correct="false">Start → Data → Address → Stop</button>
+                                <button class="answer-btn" data-correct="true">Start → Address+R/W → ACK → Data → ACK → Stop</button>
+                                <button class="answer-btn" data-correct="false">Address → Start → Data → Stop → ACK</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ ลำดับที่ถูก: <strong>Start → Address(7bit)+R/W(1bit) → ACK → Data(8bit) → ACK → Stop</strong>
+                            </div>
+                        </div>
+
+                        <!-- Q9 -->
+                        <div class="quiz-question" data-question="9">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: I2C คืออะไร?</span>
+                                <h3>คำถามที่ 9: I2C สามารถต่ออุปกรณ์ Slave ได้สูงสุดกี่ตัว (7-bit address)?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">8 ตัว</button>
+                                <button class="answer-btn" data-correct="false">32 ตัว</button>
+                                <button class="answer-btn" data-correct="true">128 ตัว (2⁷)</button>
+                                <button class="answer-btn" data-correct="false">256 ตัว</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ 7-bit address = <strong>2⁷ = 128</strong> address — แต่ใช้งานจริงได้ประมาณ 112 ตัว (บาง address ถูก reserve สำหรับฟังก์ชันพิเศษ)
+                            </div>
+                        </div>
+
+                        <!-- Q10 -->
+                        <div class="quiz-question" data-question="10">
+                            <div class="question-text">
+                                <span class="question-tag">📖 ทฤษฎี: เปรียบเทียบ</span>
+                                <h3>คำถามที่ 10: ข้อใดเป็นข้อดีของ I2C เมื่อเทียบกับ SPI?</h3>
+                            </div>
+                            <div class="answer-options">
+                                <button class="answer-btn" data-correct="false">I2C เร็วกว่า SPI</button>
+                                <button class="answer-btn" data-correct="true">I2C ใช้สายน้อยกว่า (2 เส้น) และต่อได้หลายอุปกรณ์</button>
+                                <button class="answer-btn" data-correct="false">I2C ไม่ต้องมี Address</button>
+                                <button class="answer-btn" data-correct="false">I2C ไม่ต้องใช้ Clock</button>
+                            </div>
+                            <div class="question-explanation hidden">
+                                ✅ <strong>I2C ใช้สายน้อยกว่า SPI</strong> (2 เส้น vs 4+ เส้น) และต่อหลายอุปกรณ์ได้บนบัสเดียวโดยใช้ Address แยก — แต่ SPI เร็วกว่า
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-navigation">
+                        <button id="prev-question" class="btn-secondary" disabled>⬅️ ข้อก่อนหน้า</button>
+                        <span id="question-number">คำถาม 1/10</span>
+                        <button id="next-question" class="btn-secondary" disabled>ข้อถัดไป ➡️</button>
+                    </div>
+
+                    <div class="quiz-complete hidden" id="quiz-complete">
+                        <div class="trophy">🏆</div>
+                        <h2>ทำแบบทดสอบเสร็จแล้ว!</h2>
+                        <div class="result-card">
+                            <div class="result-name">👤 <span id="result-name"></span></div>
+                            <div class="result-score">
+                                <span class="score-number" id="final-score">0</span>
+                                <span class="score-total">/10</span>
+                            </div>
+                            <div class="result-percent" id="result-percent"></div>
+                            <div class="result-grade" id="result-grade"></div>
+                        </div>
+                        <div class="result-actions">
+                            <button id="review-wrong" class="btn-secondary">📋 ดูข้อที่ผิด</button>
+                            <button id="restart-quiz" class="btn-primary">🔄 ทำแบบทดสอบใหม่</button>
+                        </div>
+                        <div class="review-section hidden" id="review-section">
+                            <h3>❌ ข้อที่ตอบผิด</h3>
+                            <div id="review-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>I2C Simulator for Vocational Education | Created for ปวส. Students</p>
+        <p style="margin-top: 0.5rem;"><a href="../" style="color: var(--primary-color);">← กลับหน้าหลัก</a></p>
+    </footer>
+
+    <script>
+        function toggleTheory() {
+            const content = document.getElementById('theory-content');
+            const btn = document.getElementById('toggle-theory');
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                btn.textContent = 'ซ่อนเนื้อหา';
+            } else {
+                content.classList.add('collapsed');
+                btn.textContent = 'แสดงเนื้อหา';
+            }
+        }
+    </script>
+    <script src="js/i2c-engine.js?v=1.0"></script>
+    <script src="js/animation.js?v=1.0"></script>
+    <script src="js/learning-mode.js?v=1.0"></script>
+    <script src="js/practice-mode.js?v=1.0"></script>
+    <script src="js/app.js?v=1.0"></script>
+</body>
+</html>
