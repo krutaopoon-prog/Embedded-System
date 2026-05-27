@@ -29,7 +29,7 @@
             <div class="theory-section">
                 <div class="theory-header">
                     <h2>📖 ทฤษฎีก่อนใช้ Simulator</h2>
-                    <button class="toggle-theory" id="toggle-theory">ซ่อน/แสดง</button>
+                    <button type="button" class="toggle-theory" id="toggle-theory" onclick="toggleTheory()">ซ่อนเนื้อหา</button>
                 </div>
                 <div class="theory-content" id="theory-content">
                     <!-- Section 1: What is SPI -->
@@ -645,10 +645,26 @@ void loop() {
         <p>SPI Simulator for Vocational Education | Created for ปวส. Students</p>
     </footer>
 
+    <script>
+        // Theory section toggle function
+        function toggleTheory() {
+            const content = document.getElementById('theory-content');
+            const btn = document.getElementById('toggle-theory');
+            if (content && btn) {
+                if (content.classList.contains('collapsed')) {
+                    content.classList.remove('collapsed');
+                    btn.textContent = 'ซ่อนเนื้อหา';
+                } else {
+                    content.classList.add('collapsed');
+                    btn.textContent = 'แสดงเนื้อหา';
+                }
+            }
+        }
+    </script>
     <script src="js/spi-engine.js?v=1.1"></script>
     <script src="js/animation.js?v=1.1"></script>
     <script src="js/learning-mode.js?v=1.1"></script>
     <script src="js/practice-mode.js?v=1.1"></script>
-    <script src="js/app.js?v=1.1"></script>
+    <script src="js/app.js?v=1.2"></script>
 </body>
 </html>
