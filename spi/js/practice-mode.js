@@ -12,6 +12,7 @@ class PracticeMode {
         this.totalQuestions = 10;
         this.score = 0;
         this.answered = {};
+        this.wrongAnswers = [];
 
         // UI Elements
         this.elements = {
@@ -30,6 +31,9 @@ class PracticeMode {
             resultName: document.getElementById('result-name'),
             resultPercent: document.getElementById('result-percent'),
             resultGrade: document.getElementById('result-grade'),
+            reviewBtn: document.getElementById('review-wrong'),
+            reviewSection: document.getElementById('review-section'),
+            reviewList: document.getElementById('review-list'),
             restartBtn: document.getElementById('restart-quiz')
         };
 
@@ -93,6 +97,9 @@ class PracticeMode {
         if (this.elements.restartBtn) {
             this.elements.restartBtn.addEventListener('click', () => this.restart());
         }
+        if (this.elements.reviewBtn) {
+            this.elements.reviewBtn.addEventListener('click', () => this.showReview());
+        }
 
         const answerButtons = document.querySelectorAll('.answer-btn');
         answerButtons.forEach(btn => {
@@ -120,6 +127,18 @@ class PracticeMode {
 
         if (isCorrect) {
             this.score++;
+        } else {
+            // เก็บข้อที่ผิดไว้แสดงทีหลัง
+            const questionText = questionEl.querySelector('h3').textContent;
+            const correctBtn = questionEl.querySelector('.answer-btn[data-correct="true"]');
+            const correctAnswer = correctBtn ? correctBtn.textContent : '';
+            const userAnswer = button.textContent;
+            this.wrongAnswers.push({
+                num: questionNum,
+                question: questionText,
+                userAnswer: userAnswer,
+                correctAnswer: correctAnswer
+            });
         }
         this.answered[questionNum] = true;
         this.updateScore();
@@ -221,12 +240,41 @@ class PracticeMode {
     }
 
     /**
+     * แสดงข้อที่ตอบผิด
+     */
+    showReview() {
+        if (!this.elements.reviewSection || !this.elements.reviewList) return;
+
+        if (this.wrongAnswers.length === 0) {
+            this.elements.reviewList.innerHTML = '<p class="review-all-correct">🎉 ตอบถูกทุกข้อ! ไม่มีข้อที่ผิด</p>';
+        } else {
+            let html = '';
+            this.wrongAnswers.forEach(item => {
+                html += `
+                    <div class="review-item">
+                        <div class="review-question">${item.question}</div>
+                        <div class="review-answers">
+                            <div class="review-wrong-answer">❌ คำตอบของคุณ: ${item.userAnswer}</div>
+                            <div class="review-correct-answer">✅ คำตอบที่ถูก: ${item.correctAnswer}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            this.elements.reviewList.innerHTML = html;
+        }
+
+        this.elements.reviewSection.classList.remove('hidden');
+        this.elements.reviewBtn.style.display = 'none';
+    }
+
+    /**
      * เริ่มใหม่ — กลับไปหน้ากรอกชื่อ
      */
     restart() {
         this.currentQuestion = 1;
         this.score = 0;
         this.answered = {};
+        this.wrongAnswers = [];
 
         // รีเซ็ต UI
         document.querySelectorAll('.answer-btn').forEach(btn => {
@@ -240,6 +288,8 @@ class PracticeMode {
 
         if (this.elements.quizComplete) this.elements.quizComplete.classList.add('hidden');
         if (this.elements.quizContent) this.elements.quizContent.style.display = 'block';
+        if (this.elements.reviewSection) this.elements.reviewSection.classList.add('hidden');
+        if (this.elements.reviewBtn) this.elements.reviewBtn.style.display = '';
 
         const nav = document.querySelector('.quiz-navigation');
         if (nav) nav.style.display = 'flex';

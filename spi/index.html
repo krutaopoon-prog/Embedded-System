@@ -673,7 +673,14 @@ void loop() {
                             <div class="result-percent" id="result-percent"></div>
                             <div class="result-grade" id="result-grade"></div>
                         </div>
-                        <button id="restart-quiz" class="btn-primary">🔄 ทำแบบทดสอบใหม่</button>
+                        <div class="result-actions">
+                            <button id="review-wrong" class="btn-secondary">📋 ดูข้อที่ผิด</button>
+                            <button id="restart-quiz" class="btn-primary">🔄 ทำแบบทดสอบใหม่</button>
+                        </div>
+                        <div class="review-section hidden" id="review-section">
+                            <h3>❌ ข้อที่ตอบผิด</h3>
+                            <div id="review-list"></div>
+                        </div>
                     </div>
                 </div>
             </div>

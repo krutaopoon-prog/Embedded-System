@@ -871,3 +871,74 @@
     font-weight: bold;
     color: var(--success-color);
 }
+
+/* ===== Result Actions ===== */
+.result-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+/* ===== Review Section ===== */
+.review-section {
+    text-align: left;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.review-section.hidden {
+    display: none;
+}
+
+.review-section h3 {
+    color: var(--error-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.review-item {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.review-question {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.review-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.review-wrong-answer {
+    color: #dc2626;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.75rem;
+    background: #fee2e2;
+    border-radius: 6px;
+}
+
+.review-correct-answer {
+    color: #16a34a;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.75rem;
+    background: #dcfce7;
+    border-radius: 6px;
+}
+
+.review-all-correct {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--success-color);
+    padding: 2rem;
+}
