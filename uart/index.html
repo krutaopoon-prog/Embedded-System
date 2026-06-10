@@ -103,9 +103,44 @@
                     <p class="highlight">⚡ <strong>กฎสำคัญ:</strong> ทั้ง 2 ฝ่ายต้องตั้ง Baud Rate ให้<strong>ตรงกัน</strong> ถ้าไม่ตรง → ข้อมูลที่รับจะเป็น "ขยะ" (Garbage Data)</p>
                 </div>
 
-                <!-- Section 4: โครงสร้าง Data Frame -->
+                <!-- Section 4: ASCII -->
                 <div class="theory-block">
-                    <h3>📦 Section 4: โครงสร้าง Data Frame (UART Packet)</h3>
+                    <h3>🔤 Section 4: ASCII คืออะไร?</h3>
+                    <div class="term-box">
+                        <h4>📘 ASCII - American Standard Code for Information Interchange</h4>
+                        <ul>
+                            <li><strong>ปัญหา:</strong> คอมพิวเตอร์รู้จักแค่ <strong>0 กับ 1</strong> เท่านั้น — แล้วจะส่งตัวอักษร 'A' ผ่านสาย UART ได้ยังไง?</li>
+                            <li><strong>คำตอบ:</strong> ASCII คือ <strong>ตารางข้อตกลงกลาง</strong> ที่บอกว่าตัวอักษรแต่ละตัว = เลขอะไร เช่น 'A' = 65</li>
+                            <li><strong>เปรียบเทียบ:</strong> เหมือนรหัสมอร์ส — ทุกคนต้องตกลงใช้ตารางเดียวกันจึงจะเข้าใจตรงกัน</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>ตัวอย่างที่ใช้บ่อย:</strong></p>
+                    <table class="mode-table">
+                        <thead>
+                            <tr><th>ตัวอักษร</th><th>Decimal</th><th>Binary (8 bit)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>'A'</td><td>65</td><td>01000001</td></tr>
+                            <tr><td>'B'</td><td>66</td><td>01000010</td></tr>
+                            <tr><td>'a'</td><td>97</td><td>01100001</td></tr>
+                            <tr><td>'0'</td><td>48</td><td>00110000</td></tr>
+                            <tr><td>Space</td><td>32</td><td>00100000</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p style="margin-top: 1rem;"><strong>ตารางรหัส ASCII ฉบับเต็ม (แทนตัวอักษรภาษาอังกฤษและภาษาไทย):</strong></p>
+                    <div style="text-align: center; margin: 0.75rem 0;">
+                        <img src="ascii.PNG" alt="ตารางแสดงรหัส ASCII แทนตัวอักษรภาษาอังกฤษและภาษาไทย"
+                             style="max-width: 100%; border: 1px solid var(--border-color); border-radius: 8px;">
+                    </div>
+
+                    <p class="highlight">💡 <strong>เชื่อมกับ UART:</strong> เวลากด "ส่ง A" ใน Simulator — UART ไม่ได้ส่งตัวอักษร 'A' โดยตรง แต่แปลง 'A' เป็น <strong>01000001</strong> แล้วส่งทีละบิตผ่านสาย TX</p>
+                </div>
+
+                <!-- Section 5: โครงสร้าง Data Frame -->
+                <div class="theory-block">
+                    <h3>📦 Section 5: โครงสร้าง Data Frame (UART Packet)</h3>
                     <p>UART ส่งข้อมูลเป็น "กรอบ" (Frame) ทีละ 1 ตัวอักษร โดยมีโครงสร้างดังนี้:</p>
 
                     <table class="mode-table">
@@ -148,9 +183,9 @@
                     </div>
                 </div>
 
-                <!-- Section 5: Idle State & Logic Level -->
+                <!-- Section 6: Idle State & Logic Level -->
                 <div class="theory-block">
-                    <h3>🔋 Section 5: Idle State และ Logic Level</h3>
+                    <h3>🔋 Section 6: Idle State และ Logic Level</h3>
                     <p>เมื่อ UART <strong>ไม่ได้ส่งข้อมูล</strong> สายจะคงสถานะ <strong>HIGH</strong> (Logic 1) เรียกว่า <strong>Idle State</strong></p>
 
                     <div class="term-box">
@@ -165,9 +200,9 @@
                     <p class="highlight">💡 เพราะ Idle = HIGH ดังนั้น Start Bit จะเปลี่ยนจาก HIGH→LOW (Falling Edge) ทำให้ฝั่งรับรู้ว่า "มีข้อมูลกำลังมา"</p>
                 </div>
 
-                <!-- Section 6: การสื่อสารแบบ Full-Duplex -->
+                <!-- Section 7: การสื่อสารแบบ Full-Duplex -->
                 <div class="theory-block">
-                    <h3>🔄 Section 6: UART เป็น Full-Duplex</h3>
+                    <h3>🔄 Section 7: UART เป็น Full-Duplex</h3>
                     <p>เนื่องจาก UART มีสาย <strong>TX</strong> และ <strong>RX</strong> แยกกัน จึงสามารถ<strong>ส่งและรับข้อมูลพร้อมกัน</strong>ได้</p>
 
                     <div class="term-box">
@@ -182,9 +217,9 @@
                     <p class="highlight">⚡ <strong>UART vs SPI:</strong> SPI มี Master ควบคุมทั้งหมด + เชื่อมได้หลาย Slave แต่ UART เป็นแบบ 1 ต่อ 1 ไม่มีใครเป็นเจ้านาย</p>
                 </div>
 
-                <!-- Section 7: ขั้นตอนการส่งข้อมูล -->
+                <!-- Section 8: ขั้นตอนการส่งข้อมูล -->
                 <div class="theory-block">
-                    <h3>📤 Section 7: ขั้นตอนการส่งข้อมูล UART</h3>
+                    <h3>📤 Section 8: ขั้นตอนการส่งข้อมูล UART</h3>
                     <ol class="process-list">
                         <li>
                             <strong>สายอยู่ในสถานะ Idle (HIGH)</strong>
