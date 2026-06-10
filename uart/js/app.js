@@ -1,14 +1,6 @@
-/**
- * App - Main entry point for UART Simulator
- * Handles mode switching between Learning and Practice
- */
-
 class App {
     constructor() {
         this.currentMode = 'learning-mode';
-        this.learningMode = null;
-        this.practiceMode = null;
-
         this.init();
     }
 
@@ -16,36 +8,43 @@ class App {
         this.setupModeSwitcher();
         this.learningMode = new LearningMode();
         this.practiceMode = new PracticeMode();
+        this.restoreFromHash();
+    }
+
+    switchMode(mode) {
+        const buttons = document.querySelectorAll('.mode-btn');
+        const target  = document.getElementById(mode);
+        if (!target || mode === this.currentMode) return;
+
+        buttons.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+        document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+        target.classList.add('active');
+
+        this.currentMode = mode;
+        history.pushState({ mode }, '', `#${mode}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     setupModeSwitcher() {
-        const buttons = document.querySelectorAll('.mode-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = btn.dataset.mode;
-                if (mode === this.currentMode) return;
-
-                // Update button states
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                // Switch sections
-                document.querySelectorAll('.mode-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-
-                const targetSection = document.getElementById(mode);
-                if (targetSection) {
-                    targetSection.classList.add('active');
-                }
-
-                this.currentMode = mode;
-            });
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.switchMode(btn.dataset.mode));
         });
+
+        window.addEventListener('popstate', (e) => {
+            const mode = (e.state && e.state.mode) || 'learning-mode';
+            this.switchMode(mode);
+        });
+    }
+
+    restoreFromHash() {
+        const hash = window.location.hash.replace('#', '');
+        const valid = ['learning-mode', 'exercise-mode', 'practice-mode'];
+        if (hash && valid.includes(hash)) {
+            this.switchMode(hash);
+        }
     }
 }
 
-// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new App();
 });
