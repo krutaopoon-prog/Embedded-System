@@ -717,3 +717,398 @@
         flex-direction: column;
     }
 }
+
+/* =====================================================
+   EXERCISE PANEL
+   ===================================================== */
+.ex-panel {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.ex-panel-header {
+    margin-bottom: 1.25rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.ex-panel-header h3 {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 0.3rem;
+}
+
+.ex-panel-header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.ex-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.ex-name-row label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.ex-name-row input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.ex-name-row input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Exercise item */
+.ex-item {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.ex-num {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.6rem;
+}
+
+.ex-q {
+    font-size: 0.95rem;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.ex-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+/* Bit input row */
+.bit-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+}
+
+.bit-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.bit-pos {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    white-space: pre;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.bit-box {
+    width: 42px;
+    height: 42px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: border-color 0.15s;
+}
+
+.bit-box:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: #eff6ff;
+}
+
+/* Ex2 option buttons */
+.ex2-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.ex2-btn {
+    padding: 0.65rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+}
+
+.ex2-btn:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    background: #eff6ff;
+}
+
+.ex2-btn.ex2-selected {
+    border-color: var(--primary-color);
+    background: #eff6ff;
+    font-weight: 600;
+}
+
+.ex2-btn.ex2-correct {
+    border-color: var(--success-color);
+    background: #f0fdf4;
+    color: #166534;
+    font-weight: 600;
+}
+
+.ex2-btn:disabled { cursor: default; }
+
+/* Ex3 input */
+.ex3-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.ex3-row label { font-weight: 600; }
+
+.ex3-input {
+    width: 64px;
+    height: 48px;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+.ex3-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.ex3-bin {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 5px;
+    letter-spacing: 2px;
+}
+
+/* Feedback */
+.ex-fb {
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 7px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.ex-fb.hidden { display: none; }
+
+.ex-ok {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.ex-err {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+.ex-fb code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* Submit button */
+.ex-submit {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 10px;
+}
+
+/* Summary */
+.ex-summary {
+    margin-top: 1.25rem;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border: 1px solid #bae6fd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.ex-summary.hidden { display: none; }
+
+.ex-score-card {
+    margin-bottom: 1rem;
+}
+
+.ex-score-big {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.ex-grade {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 0.4rem;
+}
+
+.ex-summary-btns {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-print {
+    background: #16a34a;
+}
+
+.btn-print:hover {
+    background: #15803d;
+}
+
+/* =====================================================
+   PRINT AREA (screen: hidden | print: full page)
+   ===================================================== */
+#print-area { display: none; }
+
+.ps {
+    font-family: 'Sarabun', 'Segoe UI', sans-serif;
+    font-size: 13px;
+    color: #000;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.ps-head {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.ps-head .ps-logo { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.ps-head h2 { font-size: 18px; margin: 4px 0; }
+.ps-head p  { font-size: 12px; color: #444; margin: 0; }
+
+.ps-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    font-size: 13px;
+    gap: 1rem;
+}
+
+.ps-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 12px;
+}
+
+.ps-table th, .ps-table td {
+    border: 1px solid #999;
+    padding: 6px 8px;
+    vertical-align: top;
+}
+
+.ps-table th { background: #e2e8f0; font-weight: 700; text-align: center; }
+.td-no  { text-align: center; width: 30px; }
+.td-mono { font-family: 'Courier New', monospace; font-size: 11px; text-align: center; }
+.td-ok  { text-align: center; color: #166534; font-weight: 700; font-size: 15px; }
+.td-err { text-align: center; color: #991b1b; font-weight: 700; font-size: 15px; }
+
+.ps-footer {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.ps-score-box {
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-align: center;
+    min-width: 90px;
+}
+
+.ps-score-num  { font-size: 2rem; font-weight: 800; line-height: 1; }
+.ps-score-pct  { font-size: 0.9rem; color: #555; }
+.ps-score-grade { font-size: 0.85rem; font-weight: 600; margin-top: 4px; }
+
+.ps-sign-box {
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+    font-size: 12px;
+    color: #444;
+}
+
+.ps-sign-line {
+    border-bottom: 1px solid #000;
+    margin-bottom: 4px;
+    height: 36px;
+}
+
+/* =====================================================
+   @media print
+   ===================================================== */
+@media print {
+    header, footer, .theory-section,
+    .simulator-container > *:not(#print-area),
+    .mode-switcher, #practice-mode {
+        display: none !important;
+    }
+
+    #print-area {
+        display: block !important;
+    }
+
+    body { background: white !important; }
+    main { padding: 0 !important; }
+}
