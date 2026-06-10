@@ -8,9 +8,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>UART Simulator - จำลองการทำงาน UART Protocol</title>
-    <link rel="stylesheet" href="css/base.css?v=3.0">
-    <link rel="stylesheet" href="css/theory.css?v=3.0">
-    <link rel="stylesheet" href="css/simulator.css?v=3.0">
+    <link rel="stylesheet" href="css/base.css?v=4.0">
+    <link rel="stylesheet" href="css/theory.css?v=4.0">
+    <link rel="stylesheet" href="css/simulator.css?v=4.0">
 </head>
 <body>
     <header>
@@ -550,9 +550,9 @@
                     <div class="ex-entry-card">
                         <div class="name-entry-icon">✏️</div>
                         <h2>แบบฝึกหัด UART Protocol</h2>
-                        <p>ฝึกทักษะ 3 ด้าน: แปลง ASCII↔Binary, ลำดับ Frame, และอ่าน Waveform<br>ทำเสร็จรับ<strong>ใบส่งงาน PDF</strong> พร้อมส่งครู</p>
+                        <p>ฝึกทักษะครอบคลุม 8 หัวข้อทฤษฎี: UART, สายสัญญาณ, Baud Rate, ASCII, Data Frame, Idle State, Full-Duplex และขั้นตอนการส่ง<br>ทำเสร็จรับ<strong>ใบส่งงาน PDF</strong> พร้อมส่งครู</p>
                         <div class="ex-badges">
-                            <span class="ex-badge ex-b1">📊 3 ข้อ</span>
+                            <span class="ex-badge ex-b1">📊 10 ข้อ</span>
                             <span class="ex-badge ex-b2">🎲 สุ่มคำถามทุกครั้ง</span>
                             <span class="ex-badge ex-b3">🖨️ ปริ้น PDF ได้</span>
                         </div>
@@ -571,62 +571,17 @@
                         <h2>✏️ แบบฝึกหัด UART Protocol</h2>
                         <div class="ex-work-meta">
                             <span class="ex-name-display" id="ex-name-display"></span>
-                            <div class="ex-steps">
-                                <div class="ex-step ex-step-done" id="ex-step-1">1</div>
-                                <div class="ex-step-line"></div>
-                                <div class="ex-step" id="ex-step-2">2</div>
-                                <div class="ex-step-line"></div>
-                                <div class="ex-step" id="ex-step-3">3</div>
+                            <div class="ex-progress-wrap">
+                                <span class="ex-progress-label">ความคืบหน้า:</span>
+                                <span id="ex-progress-text">0 / 10 ข้อ</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ข้อ 1 -->
-                    <div class="ex-card" id="ex-card-1">
-                        <div class="ex-card-top ex-top-1">
-                            <span class="ex-card-num">ข้อ 1</span>
-                            <span class="ex-card-title">แปลงตัวอักษรเป็น Binary</span>
-                        </div>
-                        <div class="ex-card-body">
-                            <p class="ex-q">ตัวอักษร <strong id="ex1-char" class="ex-hl"></strong> มีค่า ASCII Decimal = <strong id="ex1-dec"></strong><br>
-                            กรอกค่า Binary 8 bit (b0 = LSB ซ้ายสุด → b7 = MSB ขวาสุด):</p>
-                            <div class="bit-row" id="ex1-bits"></div>
-                            <p class="ex-hint">💡 ดูตาราง ASCII ใน Section 4 หรือใช้ ASCII Converter ด้านบนช่วยได้</p>
-                            <div class="ex-fb hidden" id="ex1-fb"></div>
-                        </div>
-                    </div>
+                    <!-- Cards rendered dynamically by exercises.js -->
+                    <div id="ex-cards-container"></div>
 
-                    <!-- ข้อ 2 -->
-                    <div class="ex-card" id="ex-card-2">
-                        <div class="ex-card-top ex-top-2">
-                            <span class="ex-card-num">ข้อ 2</span>
-                            <span class="ex-card-title">ลำดับ UART Frame</span>
-                        </div>
-                        <div class="ex-card-body">
-                            <p class="ex-q">ลำดับการส่งข้อมูล 1 Frame ใน UART ที่ถูกต้องคือข้อใด?</p>
-                            <div class="ex2-opts" id="ex2-options"></div>
-                            <div class="ex-fb hidden" id="ex2-fb"></div>
-                        </div>
-                    </div>
-
-                    <!-- ข้อ 3 -->
-                    <div class="ex-card" id="ex-card-3">
-                        <div class="ex-card-top ex-top-3">
-                            <span class="ex-card-num">ข้อ 3</span>
-                            <span class="ex-card-title">อ่าน Binary → ตัวอักษร</span>
-                        </div>
-                        <div class="ex-card-body">
-                            <p class="ex-q">Binary (LSB first): <code class="ex3-bin" id="ex3-binary"></code><br>
-                            ค่านี้คือตัวอักษรอะไร? (ใช้ตาราง ASCII ใน Section 4)</p>
-                            <div class="ex3-row">
-                                <label>ตัวอักษร:</label>
-                                <input type="text" id="ex3-answer" maxlength="1" placeholder="?" class="ex3-input" autocomplete="off">
-                            </div>
-                            <div class="ex-fb hidden" id="ex3-fb"></div>
-                        </div>
-                    </div>
-
-                    <button class="btn-primary ex-submit-btn" id="btn-ex-submit">✅ ตรวจคำตอบทั้ง 3 ข้อ</button>
+                    <button class="btn-primary ex-submit-btn" id="btn-ex-submit">✅ ตรวจคำตอบทั้งหมด</button>
                 </div>
 
                 <!-- Screen 3: Result -->
@@ -901,12 +856,12 @@
         }
     </script>
     <div id="print-area"></div>
-    <script src="js/ascii-interactive.js?v=3.0"></script>
-    <script src="js/exercises.js?v=3.0"></script>
-    <script src="js/uart-engine.js?v=3.0"></script>
-    <script src="js/animation.js?v=3.0"></script>
-    <script src="js/learning-mode.js?v=3.0"></script>
-    <script src="js/practice-mode.js?v=3.0"></script>
-    <script src="js/app.js?v=3.0"></script>
+    <script src="js/ascii-interactive.js?v=4.0"></script>
+    <script src="js/exercises.js?v=4.0"></script>
+    <script src="js/uart-engine.js?v=4.0"></script>
+    <script src="js/animation.js?v=4.0"></script>
+    <script src="js/learning-mode.js?v=4.0"></script>
+    <script src="js/practice-mode.js?v=4.0"></script>
+    <script src="js/app.js?v=4.0"></script>
 </body>
 </html>
