@@ -15,7 +15,31 @@
 
     let ex1Char, ex1Correct, ex2Correct, ex3Char, submitted;
 
-    // ── Exercise 1: build 8 bit-input boxes ──
+    // ── Screen helpers ──
+    function show(id) { document.getElementById(id).classList.remove('hidden'); }
+    function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // ── Name entry ──
+    function setupNameEntry() {
+        const nameInput = document.getElementById('ex-student-name');
+        const startBtn  = document.getElementById('btn-ex-start');
+        if (!nameInput || !startBtn) return;
+
+        nameInput.addEventListener('input', () => {
+            startBtn.disabled = nameInput.value.trim().length === 0;
+        });
+
+        startBtn.addEventListener('click', () => {
+            const name = nameInput.value.trim();
+            const display = document.getElementById('ex-name-display');
+            if (display) display.textContent = `👤 ${name}`;
+            hide('ex-entry');
+            show('ex-work-area');
+            initExercises();
+        });
+    }
+
+    // ── Build 8 bit-input boxes ──
     function buildBitInputs() {
         const wrap = document.getElementById('ex1-bits');
         if (!wrap) return;
@@ -52,13 +76,13 @@
         }
     }
 
-    // ── Exercise 2: build 4 option buttons ──
+    // ── Build Ex2 option buttons ──
     function buildEx2Options() {
         const options = [
-            { text: 'Data → Start → Stop', correct: false },
-            { text: 'Stop → Data → Start', correct: false },
-            { text: 'Start → Data → Stop', correct: true },
-            { text: 'Start → Stop → Data', correct: false },
+            { text: 'Data → Start → Stop',  correct: false },
+            { text: 'Stop → Data → Start',  correct: false },
+            { text: 'Start → Data → Stop',  correct: true  },
+            { text: 'Start → Stop → Data',  correct: false },
         ].sort(() => Math.random() - 0.5);
 
         const wrap = document.getElementById('ex2-options');
@@ -79,38 +103,42 @@
         });
     }
 
+    // ── Initialise exercises (randomise) ──
     function initExercises() {
         submitted = false;
 
-        ex1Char = randChar(null);
-        ex3Char = randChar(ex1Char);
+        ex1Char    = randChar(null);
+        ex3Char    = randChar(ex1Char);
         ex1Correct = lsbFirst(ex1Char.charCodeAt(0));
 
-        // Ex1 labels
         document.getElementById('ex1-char').textContent = `'${ex1Char}'`;
-        document.getElementById('ex1-dec').textContent = ex1Char.charCodeAt(0);
+        document.getElementById('ex1-dec').textContent  = ex1Char.charCodeAt(0);
         buildBitInputs();
 
-        // Ex2
         buildEx2Options();
 
-        // Ex3
         document.getElementById('ex3-binary').textContent = lsbFirst(ex3Char.charCodeAt(0));
-        document.getElementById('ex3-answer').value = '';
-        document.getElementById('ex3-answer').disabled = false;
+        const ex3Input = document.getElementById('ex3-answer');
+        ex3Input.value    = '';
+        ex3Input.disabled = false;
 
-        // Reset feedback
         ['ex1-fb', 'ex2-fb', 'ex3-fb'].forEach(id => {
             const el = document.getElementById(id);
             el.className = 'ex-fb hidden';
             el.innerHTML = '';
         });
 
-        document.getElementById('ex-summary').classList.add('hidden');
-        document.getElementById('btn-ex-submit').classList.remove('hidden');
+        // Update step indicators
+        ['ex-step-1','ex-step-2','ex-step-3'].forEach((id, i) => {
+            const el = document.getElementById(id);
+            if (el) el.className = 'ex-step' + (i === 0 ? ' ex-step-done' : '');
+        });
+
+        show('btn-ex-submit');
         document.getElementById('btn-ex-submit').disabled = false;
     }
 
+    // ── Get user's bit answer ──
     function getUserBin() {
         return Array.from({ length: 8 }, (_, i) => {
             const v = (document.getElementById(`ex1b${i}`) || {}).value;
@@ -118,12 +146,13 @@
         }).join('');
     }
 
-    function showFeedback(id, correct, msg) {
+    function setFeedback(id, ok, html) {
         const el = document.getElementById(id);
-        el.className = `ex-fb ${correct ? 'ex-ok' : 'ex-err'}`;
-        el.innerHTML = msg;
+        el.className = `ex-fb ${ok ? 'ex-ok' : 'ex-err'}`;
+        el.innerHTML = html;
     }
 
+    // ── Check all answers ──
     function checkAll() {
         if (submitted) return;
         submitted = true;
@@ -134,11 +163,12 @@
         const userBin = getUserBin();
         const ok1 = userBin === ex1Correct;
         if (ok1) score++;
-        showFeedback('ex1-fb', ok1,
+        setFeedback('ex1-fb', ok1,
             ok1
-                ? `✅ ถูกต้อง! <strong>'${ex1Char}'</strong> (${ex1Char.charCodeAt(0)}) = <code>${ex1Correct}</code>`
-                : `❌ ผิด — เฉลย: <code>${ex1Correct}</code> &nbsp;|&nbsp; คุณตอบ: <code>${userBin}</code>`
+            ? `✅ ถูกต้อง! <strong>'${ex1Char}'</strong> (${ex1Char.charCodeAt(0)}) = <code>${ex1Correct}</code>`
+            : `❌ ผิด &nbsp;— เฉลย: <code>${ex1Correct}</code> &nbsp;|&nbsp; คุณตอบ: <code>${userBin}</code>`
         );
+        markStep(1, ok1);
 
         // Ex2
         const ok2 = ex2Correct === true;
@@ -147,54 +177,72 @@
             btn.disabled = true;
             if (btn.textContent === 'Start → Data → Stop') btn.classList.add('ex2-correct');
         });
-        showFeedback('ex2-fb', ok2,
+        setFeedback('ex2-fb', ok2,
             ok2
-                ? '✅ ถูกต้อง! ลำดับ UART Frame: Start → Data → Stop'
-                : '❌ ผิด — ลำดับที่ถูกต้อง: <strong>Start → Data → Stop</strong>'
+            ? '✅ ถูกต้อง! ลำดับ UART Frame: <strong>Start → Data → Stop</strong>'
+            : '❌ ผิด &nbsp;— ลำดับที่ถูกต้อง: <strong>Start → Data → Stop</strong>'
         );
+        markStep(2, ok2);
 
         // Ex3
         const userCh = (document.getElementById('ex3-answer').value || '').trim();
         document.getElementById('ex3-answer').disabled = true;
         const ok3 = userCh === ex3Char;
         if (ok3) score++;
-        showFeedback('ex3-fb', ok3,
+        setFeedback('ex3-fb', ok3,
             ok3
-                ? `✅ ถูกต้อง! <code>${lsbFirst(ex3Char.charCodeAt(0))}</code> = <strong>'${ex3Char}'</strong> (${ex3Char.charCodeAt(0)})`
-                : `❌ ผิด — เฉลย: <strong>'${ex3Char}'</strong> (ASCII ${ex3Char.charCodeAt(0)})`
+            ? `✅ ถูกต้อง! <code>${lsbFirst(ex3Char.charCodeAt(0))}</code> = <strong>'${ex3Char}'</strong> (ASCII ${ex3Char.charCodeAt(0)})`
+            : `❌ ผิด &nbsp;— เฉลย: <strong>'${ex3Char}'</strong> (ASCII ${ex3Char.charCodeAt(0)})`
         );
+        markStep(3, ok3);
 
-        // Summary
-        const grades = ['❗ ลองทำใหม่อีกครั้ง', '📚 ต้องฝึกเพิ่ม', '👍 ดีมาก', '🌟 ยอดเยี่ยม!'];
-        document.getElementById('ex-final-score').textContent = `${score}/3`;
-        document.getElementById('ex-grade-text').textContent = grades[score];
-        document.getElementById('ex-summary').classList.remove('hidden');
-        document.getElementById('btn-ex-submit').classList.add('hidden');
+        // Show result screen after short delay
+        setTimeout(() => {
+            hide('ex-work-area');
+            showResult(score);
+        }, 1200);
 
-        // Store for print
+        // Store for PDF
         window._exPrintData = {
-            name: (document.getElementById('ex-student-name').value || '').trim() || '(ไม่ระบุ)',
-            date: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }),
+            name  : (document.getElementById('ex-student-name').value || '').trim() || '(ไม่ระบุ)',
+            date  : new Date().toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' }),
             score,
-            grade: grades[score].replace(/[❗📚👍🌟]/g, '').trim(),
-            rows: [
-                {
-                    q: `แปลงตัวอักษร '${ex1Char}' (ASCII ${ex1Char.charCodeAt(0)}) เป็น Binary 8 bit (LSB first)`,
-                    user: userBin, answer: ex1Correct, ok: ok1
-                },
-                {
-                    q: 'ลำดับการส่งข้อมูล UART 1 Frame ที่ถูกต้องคือข้อใด?',
-                    user: ex2Correct === null ? '(ไม่ตอบ)' : ok2 ? 'Start → Data → Stop' : '(ผิด)',
-                    answer: 'Start → Data → Stop', ok: ok2
-                },
-                {
-                    q: `Binary (LSB first): ${lsbFirst(ex3Char.charCodeAt(0))} คือตัวอักษรอะไร?`,
-                    user: userCh || '(ไม่ตอบ)', answer: ex3Char, ok: ok3
-                }
+            grade : gradeText(score).replace(/[🌟👍📚❗]/g,'').trim(),
+            rows  : [
+                { q: `แปลงตัวอักษร '${ex1Char}' (ASCII ${ex1Char.charCodeAt(0)}) เป็น Binary 8 bit (LSB first)`,
+                  user: userBin, answer: ex1Correct, ok: ok1 },
+                { q: 'ลำดับการส่งข้อมูล UART 1 Frame ที่ถูกต้องคือข้อใด?',
+                  user: ex2Correct === null ? '(ไม่ตอบ)' : ok2 ? 'Start → Data → Stop' : '(ผิด)',
+                  answer: 'Start → Data → Stop', ok: ok2 },
+                { q: `Binary (LSB first): ${lsbFirst(ex3Char.charCodeAt(0))} คือตัวอักษรอะไร?`,
+                  user: userCh || '(ไม่ตอบ)', answer: ex3Char, ok: ok3 }
             ]
         };
     }
 
+    function gradeText(score) {
+        return ['❗ ลองทำใหม่อีกครั้ง', '📚 ต้องฝึกเพิ่ม', '👍 ดีมาก', '🌟 ยอดเยี่ยม!'][score];
+    }
+
+    function markStep(num, ok) {
+        const el = document.getElementById(`ex-step-${num}`);
+        if (el) el.className = `ex-step ${ok ? 'ex-step-ok' : 'ex-step-err'}`;
+    }
+
+    function showResult(score) {
+        document.getElementById('ex-final-score').textContent = `${score}/3`;
+        document.getElementById('ex-grade-text').textContent  = gradeText(score);
+        show('ex-result-screen');
+    }
+
+    // ── Retry ──
+    function retry() {
+        hide('ex-result-screen');
+        show('ex-work-area');
+        initExercises();
+    }
+
+    // ── Print PDF ──
     function doPrint() {
         const d = window._exPrintData;
         if (!d) return;
@@ -207,8 +255,6 @@
                 <td class="td-mono">${r.answer}</td>
                 <td class="${r.ok ? 'td-ok' : 'td-err'}">${r.ok ? '✓' : '✗'}</td>
             </tr>`).join('');
-
-        const percent = Math.round((d.score / 3) * 100);
 
         document.getElementById('print-area').innerHTML = `
             <div class="ps">
@@ -228,7 +274,7 @@
                 <div class="ps-footer">
                     <div class="ps-score-box">
                         <div class="ps-score-num">${d.score}/3</div>
-                        <div class="ps-score-pct">${percent}%</div>
+                        <div class="ps-score-pct">${Math.round(d.score/3*100)}%</div>
                         <div class="ps-score-grade">${d.grade}</div>
                     </div>
                     <div class="ps-sign-box">
@@ -245,10 +291,11 @@
         window.print();
     }
 
+    // ── Boot ──
     document.addEventListener('DOMContentLoaded', () => {
-        initExercises();
+        setupNameEntry();
         document.getElementById('btn-ex-submit').addEventListener('click', checkAll);
-        document.getElementById('btn-ex-retry').addEventListener('click', initExercises);
+        document.getElementById('btn-ex-retry').addEventListener('click', retry);
         document.getElementById('btn-ex-print').addEventListener('click', doPrint);
     });
 })();

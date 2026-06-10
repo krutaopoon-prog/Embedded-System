@@ -19,6 +19,7 @@
             <p>จำลองการทำงานของ Universal Asynchronous Receiver-Transmitter สำหรับนักเรียน ปวส.</p>
             <div class="mode-switcher">
                 <button class="mode-btn active" data-mode="learning-mode">📚 โหมดเรียนรู้</button>
+                <button class="mode-btn" data-mode="exercise-mode">✏️ โหมดแบบฝึกหัด</button>
                 <button class="mode-btn" data-mode="practice-mode">📝 โหมดทดสอบ</button>
             </div>
         </div>
@@ -537,64 +538,112 @@
                     </div>
                 </div>
 
-                <!-- Exercise Panel -->
-                <div class="ex-panel">
-                    <div class="ex-panel-header">
-                        <h3>✏️ แบบฝึกหัด UART (3 ข้อ)</h3>
-                        <p>ทดสอบความเข้าใจหลังจากเล่น Simulator — ทำเสร็จแล้วปริ้นส่งครูได้เลย</p>
-                    </div>
+            </div>
+        </section>
 
-                    <div class="ex-name-row">
-                        <label for="ex-student-name">ชื่อ-นามสกุล:</label>
-                        <input type="text" id="ex-student-name" placeholder="กรอกชื่อก่อนทำแบบฝึกหัด" maxlength="60" autocomplete="off">
+        <!-- Exercise Mode -->
+        <section id="exercise-mode" class="mode-section">
+            <div class="ex-container">
+
+                <!-- Screen 1: Name Entry -->
+                <div class="ex-entry" id="ex-entry">
+                    <div class="ex-entry-card">
+                        <div class="name-entry-icon">✏️</div>
+                        <h2>แบบฝึกหัด UART Protocol</h2>
+                        <p>ฝึกทักษะ 3 ด้าน: แปลง ASCII↔Binary, ลำดับ Frame, และอ่าน Waveform<br>ทำเสร็จรับ<strong>ใบส่งงาน PDF</strong> พร้อมส่งครู</p>
+                        <div class="ex-badges">
+                            <span class="ex-badge ex-b1">📊 3 ข้อ</span>
+                            <span class="ex-badge ex-b2">🎲 สุ่มคำถามทุกครั้ง</span>
+                            <span class="ex-badge ex-b3">🖨️ ปริ้น PDF ได้</span>
+                        </div>
+                        <div class="name-input-group">
+                            <label for="ex-student-name">กรอกชื่อ-นามสกุล:</label>
+                            <input type="text" id="ex-student-name" placeholder="เช่น สมชาย ใจดี" maxlength="60" autocomplete="off">
+                        </div>
+                        <button id="btn-ex-start" class="btn-primary btn-large" disabled>เริ่มทำแบบฝึกหัด →</button>
+                        <p class="name-hint">* กรุณากรอกชื่อก่อนเริ่มทำแบบฝึกหัด</p>
+                    </div>
+                </div>
+
+                <!-- Screen 2: Work Area -->
+                <div class="ex-work-area hidden" id="ex-work-area">
+                    <div class="ex-work-header">
+                        <h2>✏️ แบบฝึกหัด UART Protocol</h2>
+                        <div class="ex-work-meta">
+                            <span class="ex-name-display" id="ex-name-display"></span>
+                            <div class="ex-steps">
+                                <div class="ex-step ex-step-done" id="ex-step-1">1</div>
+                                <div class="ex-step-line"></div>
+                                <div class="ex-step" id="ex-step-2">2</div>
+                                <div class="ex-step-line"></div>
+                                <div class="ex-step" id="ex-step-3">3</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- ข้อ 1 -->
-                    <div class="ex-item">
-                        <div class="ex-num">ข้อ 1/3 — แปลงตัวอักษรเป็น Binary</div>
-                        <p class="ex-q">ตัวอักษร <strong id="ex1-char"></strong> มีค่า ASCII Decimal = <strong id="ex1-dec"></strong><br>กรอกค่า Binary 8 bit (เริ่มจาก b0 = LSB ซ้ายสุด):</p>
-                        <div class="bit-row" id="ex1-bits"></div>
-                        <p class="ex-hint">💡 ใช้ตาราง ASCII ใน Section 4 ช่วยได้ หรือลองกดตัวอักษรใน ASCII Converter</p>
-                        <div class="ex-fb hidden" id="ex1-fb"></div>
+                    <div class="ex-card" id="ex-card-1">
+                        <div class="ex-card-top ex-top-1">
+                            <span class="ex-card-num">ข้อ 1</span>
+                            <span class="ex-card-title">แปลงตัวอักษรเป็น Binary</span>
+                        </div>
+                        <div class="ex-card-body">
+                            <p class="ex-q">ตัวอักษร <strong id="ex1-char" class="ex-hl"></strong> มีค่า ASCII Decimal = <strong id="ex1-dec"></strong><br>
+                            กรอกค่า Binary 8 bit (b0 = LSB ซ้ายสุด → b7 = MSB ขวาสุด):</p>
+                            <div class="bit-row" id="ex1-bits"></div>
+                            <p class="ex-hint">💡 ดูตาราง ASCII ใน Section 4 หรือใช้ ASCII Converter ด้านบนช่วยได้</p>
+                            <div class="ex-fb hidden" id="ex1-fb"></div>
+                        </div>
                     </div>
 
                     <!-- ข้อ 2 -->
-                    <div class="ex-item">
-                        <div class="ex-num">ข้อ 2/3 — ลำดับ UART Frame</div>
-                        <p class="ex-q">ลำดับการส่งข้อมูล 1 Frame ใน UART ที่ถูกต้องคือข้อใด?</p>
-                        <div class="ex2-opts" id="ex2-options"></div>
-                        <div class="ex-fb hidden" id="ex2-fb"></div>
+                    <div class="ex-card" id="ex-card-2">
+                        <div class="ex-card-top ex-top-2">
+                            <span class="ex-card-num">ข้อ 2</span>
+                            <span class="ex-card-title">ลำดับ UART Frame</span>
+                        </div>
+                        <div class="ex-card-body">
+                            <p class="ex-q">ลำดับการส่งข้อมูล 1 Frame ใน UART ที่ถูกต้องคือข้อใด?</p>
+                            <div class="ex2-opts" id="ex2-options"></div>
+                            <div class="ex-fb hidden" id="ex2-fb"></div>
+                        </div>
                     </div>
 
                     <!-- ข้อ 3 -->
-                    <div class="ex-item">
-                        <div class="ex-num">ข้อ 3/3 — อ่าน Binary → ตัวอักษร</div>
-                        <p class="ex-q">Binary (LSB first): <code class="ex3-bin" id="ex3-binary"></code><br>ค่านี้คือตัวอักษรอะไร? (ดูจากตาราง ASCII ใน Section 4)</p>
-                        <div class="ex3-row">
-                            <label>ตัวอักษร:</label>
-                            <input type="text" id="ex3-answer" maxlength="1" placeholder="?" class="ex3-input" autocomplete="off">
+                    <div class="ex-card" id="ex-card-3">
+                        <div class="ex-card-top ex-top-3">
+                            <span class="ex-card-num">ข้อ 3</span>
+                            <span class="ex-card-title">อ่าน Binary → ตัวอักษร</span>
                         </div>
-                        <div class="ex-fb hidden" id="ex3-fb"></div>
+                        <div class="ex-card-body">
+                            <p class="ex-q">Binary (LSB first): <code class="ex3-bin" id="ex3-binary"></code><br>
+                            ค่านี้คือตัวอักษรอะไร? (ใช้ตาราง ASCII ใน Section 4)</p>
+                            <div class="ex3-row">
+                                <label>ตัวอักษร:</label>
+                                <input type="text" id="ex3-answer" maxlength="1" placeholder="?" class="ex3-input" autocomplete="off">
+                            </div>
+                            <div class="ex-fb hidden" id="ex3-fb"></div>
+                        </div>
                     </div>
 
-                    <!-- Submit -->
-                    <button class="btn-primary ex-submit" id="btn-ex-submit">✅ ตรวจคำตอบ</button>
+                    <button class="btn-primary ex-submit-btn" id="btn-ex-submit">✅ ตรวจคำตอบทั้ง 3 ข้อ</button>
+                </div>
 
-                    <!-- Summary -->
-                    <div class="ex-summary hidden" id="ex-summary">
-                        <div class="ex-score-card">
-                            <div class="ex-score-big" id="ex-final-score">0/3</div>
-                            <div class="ex-grade" id="ex-grade-text"></div>
+                <!-- Screen 3: Result -->
+                <div class="ex-result-screen hidden" id="ex-result-screen">
+                    <div class="ex-result-card">
+                        <div class="ex-result-trophy">🏆</div>
+                        <h2>ทำแบบฝึกหัดเสร็จแล้ว!</h2>
+                        <div class="ex-result-score">
+                            <div class="ex-score-num" id="ex-final-score">0/3</div>
+                            <div class="ex-score-grade" id="ex-grade-text"></div>
                         </div>
-                        <div class="ex-summary-btns">
-                            <button class="btn-secondary" id="btn-ex-retry">🔄 ทำใหม่ (สุ่มคำถามใหม่)</button>
+                        <div class="ex-result-btns">
+                            <button class="btn-secondary" id="btn-ex-retry">🔄 ทำใหม่</button>
                             <button class="btn-primary btn-print" id="btn-ex-print">🖨️ ปริ้นใบส่งงาน PDF</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Print Area (hidden on screen, shown only when printing) -->
-                <div id="print-area"></div>
 
             </div>
         </section>
@@ -851,6 +900,7 @@
             }
         }
     </script>
+    <div id="print-area"></div>
     <script src="js/ascii-interactive.js?v=1.0"></script>
     <script src="js/exercises.js?v=1.0"></script>
     <script src="js/uart-engine.js?v=1.0"></script>
