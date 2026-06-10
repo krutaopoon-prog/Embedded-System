@@ -239,6 +239,115 @@
                     </div>
 
                     <p class="highlight">💡 เพราะ Idle = HIGH ดังนั้น Start Bit จะเปลี่ยนจาก HIGH→LOW (Falling Edge) ทำให้ฝั่งรับรู้ว่า "มีข้อมูลกำลังมา"</p>
+
+                    <!-- Idle State Waveform Diagram -->
+                    <div class="idle-diagram">
+                        <p class="idle-caption">📊 ภาพประกอบ: สัญญาณ UART ขณะส่งตัวอักษร 'A' (ASCII 65 = 01000001, LSB first)</p>
+                        <div class="idle-svg-wrap">
+                        <svg viewBox="0 0 780 178" xmlns="http://www.w3.org/2000/svg" class="idle-svg">
+
+                            <!-- Segment background fills -->
+                            <rect x="75"  y="8" width="65"  height="118" fill="#0891b2" fill-opacity="0.10" rx="3"/>
+                            <rect x="140" y="8" width="55"  height="118" fill="#ef4444" fill-opacity="0.13" rx="3"/>
+                            <rect x="195" y="8" width="55"  height="118" fill="#f97316" fill-opacity="0.13" rx="3"/>
+                            <rect x="250" y="8" width="275" height="118" fill="#64748b" fill-opacity="0.07" rx="3"/>
+                            <rect x="525" y="8" width="55"  height="118" fill="#f97316" fill-opacity="0.13" rx="3"/>
+                            <rect x="580" y="8" width="55"  height="118" fill="#64748b" fill-opacity="0.07" rx="3"/>
+                            <rect x="635" y="8" width="55"  height="118" fill="#22c55e" fill-opacity="0.13" rx="3"/>
+                            <rect x="690" y="8" width="82"  height="118" fill="#0891b2" fill-opacity="0.10" rx="3"/>
+
+                            <!-- Reference dashed lines -->
+                            <line x1="70" y1="35" x2="775" y2="35" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="5,5"/>
+                            <line x1="70" y1="100" x2="775" y2="100" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="5,5"/>
+
+                            <!-- Y-axis labels -->
+                            <text x="5"  y="39"  font-size="11" fill="#0891b2" font-weight="bold" font-family="monospace">HIGH(1)</text>
+                            <text x="5"  y="104" font-size="11" fill="#475569" font-weight="bold" font-family="monospace">LOW (0)</text>
+
+                            <!-- ── Signal line ── -->
+                            <!-- Idle before: HIGH -->
+                            <line x1="75"  y1="35"  x2="140" y2="35"  stroke="#0891b2" stroke-width="3" stroke-linecap="round"/>
+                            <!-- Falling edge → Start -->
+                            <line x1="140" y1="35"  x2="140" y2="100" stroke="#ef4444" stroke-width="2.5"/>
+                            <!-- Start Bit: LOW -->
+                            <line x1="140" y1="100" x2="195" y2="100" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                            <!-- Rising → D0=1 -->
+                            <line x1="195" y1="100" x2="195" y2="35"  stroke="#f97316" stroke-width="2.5"/>
+                            <!-- D0=1: HIGH -->
+                            <line x1="195" y1="35"  x2="250" y2="35"  stroke="#f97316" stroke-width="3"/>
+                            <!-- Falling → D1=0 -->
+                            <line x1="250" y1="35"  x2="250" y2="100" stroke="#475569" stroke-width="2.5"/>
+                            <!-- D1–D5 = 0: LOW continuous -->
+                            <line x1="250" y1="100" x2="525" y2="100" stroke="#475569" stroke-width="3"/>
+                            <!-- Rising → D6=1 -->
+                            <line x1="525" y1="100" x2="525" y2="35"  stroke="#f97316" stroke-width="2.5"/>
+                            <!-- D6=1: HIGH -->
+                            <line x1="525" y1="35"  x2="580" y2="35"  stroke="#f97316" stroke-width="3"/>
+                            <!-- Falling → D7=0 -->
+                            <line x1="580" y1="35"  x2="580" y2="100" stroke="#475569" stroke-width="2.5"/>
+                            <!-- D7=0: LOW -->
+                            <line x1="580" y1="100" x2="635" y2="100" stroke="#475569" stroke-width="3"/>
+                            <!-- Rising → Stop -->
+                            <line x1="635" y1="100" x2="635" y2="35"  stroke="#22c55e" stroke-width="2.5"/>
+                            <!-- Stop Bit: HIGH -->
+                            <line x1="635" y1="35"  x2="690" y2="35"  stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
+                            <!-- Idle after: HIGH -->
+                            <line x1="690" y1="35"  x2="772" y2="35"  stroke="#0891b2" stroke-width="3" stroke-linecap="round"/>
+
+                            <!-- Bit boundary dashed dividers (D1–D5) -->
+                            <line x1="305" y1="8" x2="305" y2="126" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3"/>
+                            <line x1="360" y1="8" x2="360" y2="126" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3"/>
+                            <line x1="415" y1="8" x2="415" y2="126" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3"/>
+                            <line x1="470" y1="8" x2="470" y2="126" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3"/>
+
+                            <!-- Falling edge annotation -->
+                            <text x="143" y="58" font-size="9" fill="#ef4444" font-weight="bold">Falling</text>
+                            <text x="143" y="69" font-size="9" fill="#ef4444" font-weight="bold">Edge</text>
+                            <text x="143" y="80" font-size="11" fill="#ef4444">↓</text>
+
+                            <!-- Data section bracket label at top -->
+                            <line x1="196" y1="18" x2="634" y2="18" stroke="#f97316" stroke-width="1.2" stroke-dasharray="3,2" opacity="0.7"/>
+                            <text x="415" y="15" font-size="10" fill="#f97316" text-anchor="middle" font-style="italic">Data Bits × 8 (LSB first)</text>
+
+                            <!-- ── Segment labels ── -->
+                            <text x="107"  y="138" font-size="11" fill="#0891b2" text-anchor="middle" font-weight="bold">Idle</text>
+                            <text x="107"  y="151" font-size="10" fill="#0891b2" text-anchor="middle">HIGH</text>
+
+                            <text x="167"  y="133" font-size="11" fill="#ef4444" text-anchor="middle" font-weight="bold">Start</text>
+                            <text x="167"  y="145" font-size="10" fill="#ef4444" text-anchor="middle">Bit</text>
+                            <text x="167"  y="157" font-size="10" fill="#ef4444" text-anchor="middle">LOW</text>
+
+                            <text x="222"  y="138" font-size="10" fill="#f97316" text-anchor="middle" font-weight="bold">D0=1</text>
+                            <text x="277"  y="138" font-size="10" fill="#475569" text-anchor="middle" font-weight="bold">D1=0</text>
+                            <text x="332"  y="138" font-size="10" fill="#475569" text-anchor="middle" font-weight="bold">D2=0</text>
+                            <text x="387"  y="138" font-size="10" fill="#475569" text-anchor="middle" font-weight="bold">D3=0</text>
+                            <text x="442"  y="138" font-size="10" fill="#475569" text-anchor="middle" font-weight="bold">D4=0</text>
+                            <text x="497"  y="138" font-size="10" fill="#475569" text-anchor="middle" font-weight="bold">D5=0</text>
+                            <text x="552"  y="138" font-size="10" fill="#f97316" text-anchor="middle" font-weight="bold">D6=1</text>
+                            <text x="607"  y="138" font-size="10" fill="#475569" text-anchor="middle" font-weight="bold">D7=0</text>
+
+                            <text x="662"  y="133" font-size="11" fill="#22c55e" text-anchor="middle" font-weight="bold">Stop</text>
+                            <text x="662"  y="145" font-size="10" fill="#22c55e" text-anchor="middle">Bit</text>
+                            <text x="662"  y="157" font-size="10" fill="#22c55e" text-anchor="middle">HIGH</text>
+
+                            <text x="731"  y="138" font-size="11" fill="#0891b2" text-anchor="middle" font-weight="bold">Idle</text>
+                            <text x="731"  y="151" font-size="10" fill="#0891b2" text-anchor="middle">HIGH</text>
+
+                            <!-- Ellipsis to show idle continues -->
+                            <text x="62"  y="37" font-size="13" fill="#0891b2" opacity="0.6">…</text>
+                            <text x="760" y="37" font-size="13" fill="#0891b2" opacity="0.6">…</text>
+                        </svg>
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="idle-legend">
+                            <span><span class="idle-dot" style="background:#0891b2"></span>Idle (HIGH)</span>
+                            <span><span class="idle-dot" style="background:#ef4444"></span>Start Bit (LOW)</span>
+                            <span><span class="idle-dot" style="background:#f97316"></span>Data = 1</span>
+                            <span><span class="idle-dot" style="background:#475569"></span>Data = 0</span>
+                            <span><span class="idle-dot" style="background:#22c55e"></span>Stop Bit (HIGH)</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Section 7: การสื่อสารแบบ Full-Duplex -->
