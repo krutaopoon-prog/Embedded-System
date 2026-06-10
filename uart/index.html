@@ -129,12 +129,23 @@
                         <ul>
                             <li><strong>Start Bit:</strong> สายที่ปกติเป็น HIGH จะดึงลง LOW 1 บิต — เหมือนกดกริ่งบอกว่า "มีข้อมูลมา!"</li>
                             <li><strong>Data Bits:</strong> ข้อมูลจริง ส่ง LSB ก่อน (บิตค่าน้อยสุดก่อน)</li>
-                            <li><strong>Parity Bit:</strong> ตรวจสอบว่าข้อมูลถูกต้องไหม (Even/Odd) — ไม่บังคับใช้</li>
+                            <li><strong>Parity Bit:</strong> ตรวจสอบว่าข้อมูลถูกต้องไหม — นับจำนวน 1 ในข้อมูล แล้วเพิ่มบิตให้ครบตามเงื่อนไข (ไม่บังคับใช้)</li>
                             <li><strong>Stop Bit:</strong> ดึงสายกลับ HIGH — เหมือนจบประโยค บอกว่า "พูดจบแล้ว"</li>
                         </ul>
                     </div>
 
                     <p class="note">📝 <strong>ตัวอย่าง:</strong> ส่งตัว 'A' (ASCII 65 = 01000001) → Frame = [Start:0] [Data:1-0-0-0-0-0-1-0] [Stop:1] — ส่ง LSB first!</p>
+
+                    <div class="term-box">
+                        <h4>📘 ตัวอย่างการคำนวณ Parity Bit — ส่งตัว 'A' (01000001)</h4>
+                        <p>ขั้นตอน: <strong>นับจำนวนบิต 1 ในข้อมูล</strong> → 01000001 มี <strong>1 อยู่ 2 ตัว</strong> (ตำแหน่ง bit0 กับ bit6)</p>
+                        <ul>
+                            <li><strong>Even Parity:</strong> ต้องการให้นับ 1 รวม Parity เป็น<strong>เลขคู่</strong> → ปัจจุบันมี 2 ตัว (คู่อยู่แล้ว) → Parity Bit = <strong>0</strong></li>
+                            <li><strong>Odd Parity:</strong> ต้องการให้นับ 1 รวม Parity เป็น<strong>เลขคี่</strong> → ปัจจุบันมี 2 ตัว (ต้องเพิ่ม 1) → Parity Bit = <strong>1</strong></li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;">Frame (Even): [Start:0] [Data:1-0-0-0-0-0-1-0] [<span style="color:#f97316;">Parity:0</span>] [Stop:1]</p>
+                        <p>Frame (Odd): [Start:0] [Data:1-0-0-0-0-0-1-0] [<span style="color:#f97316;">Parity:1</span>] [Stop:1]</p>
+                    </div>
                 </div>
 
                 <!-- Section 5: Idle State & Logic Level -->
