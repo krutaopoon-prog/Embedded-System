@@ -7,9 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>I2C Simulator - จำลองการทำงาน I2C Protocol</title>
-    <link rel="stylesheet" href="css/base.css?v=1.0">
-    <link rel="stylesheet" href="css/theory.css?v=1.0">
-    <link rel="stylesheet" href="css/simulator.css?v=1.0">
+    <link rel="stylesheet" href="css/base.css?v=2.0">
+    <link rel="stylesheet" href="css/theory.css?v=2.0">
+    <link rel="stylesheet" href="css/simulator.css?v=2.0">
 </head>
 <body>
     <header>
@@ -71,11 +71,45 @@
 
                     <div class="term-box">
                         <h4>📘 Pull-up Resistor คืออะไร?</h4>
-                        <ul>
-                            <li><strong>ทำไมต้องมี:</strong> SDA และ SCL เป็น Open-drain — ไม่สามารถดึงสายขึ้น HIGH ได้เอง</li>
-                            <li><strong>ค่าที่ใช้:</strong> 4.7kΩ หรือ 10kΩ ต่อจากสายไป VCC</li>
-                            <li><strong>หลักการ:</strong> สาย = HIGH (ปล่อย) ← Pull-up ดึงขึ้น | สาย = LOW (ดึงลง) ← อุปกรณ์ดึง</li>
-                        </ul>
+
+                        <p>สาย <strong>SDA</strong> และ <strong>SCL</strong> ของ I2C เป็นแบบ <strong>Open-drain</strong> —
+                        อุปกรณ์สามารถดึงสายลง <strong>LOW (0V)</strong> ได้ แต่ <strong>ไม่สามารถดึงขึ้น HIGH</strong> ได้เอง
+                        จึงต้องมี <strong>Pull-up Resistor</strong> ต่อระหว่าง VCC และสายเพื่อดึงให้เป็น HIGH เมื่อไม่มีอุปกรณ์ใดดึงลง</p>
+
+                        <div class="pullup-img-wrap">
+                            <img src="Pull-up-resistor.png"
+                                 alt="วงจร Pull-up Resistor สำหรับสาย SDA และ SCL ของ I2C"
+                                 class="pullup-img">
+                            <p class="pullup-caption">วงจร Pull-up Resistor: R ต่อระหว่าง VCC → SDA/SCL เพื่อดึงสายขึ้น HIGH เมื่อไม่มีการส่งข้อมูล</p>
+                        </div>
+
+                        <div class="pullup-states">
+                            <div class="pullup-state">
+                                <span class="pullup-badge badge-high">HIGH (1)</span>
+                                <p>ไม่มีอุปกรณ์ใดดึงลง<br>
+                                → Pull-up ดึงสายขึ้น <strong>VCC</strong> อัตโนมัติ
+                                <small>Idle State / สาย "ว่าง" = 1 เสมอ</small></p>
+                            </div>
+                            <div class="pullup-state">
+                                <span class="pullup-badge badge-low">LOW (0)</span>
+                                <p>อุปกรณ์เปิด Transistor ดึงสายลง <strong>GND</strong>
+                                <small>เขียน bit = 0 หรือส่ง Start/ACK</small></p>
+                            </div>
+                        </div>
+
+                        <table class="mode-table">
+                            <thead>
+                                <tr><th>ค่า Resistor</th><th>Speed Mode</th><th>เหมาะสำหรับ</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>10 kΩ</strong></td><td>Standard (100 kHz)</td><td>สายยาว / ทดสอบทั่วไป</td></tr>
+                                <tr><td><strong>4.7 kΩ</strong></td><td>Standard / Fast (400 kHz)</td><td>✅ ค่าที่นิยมที่สุด</td></tr>
+                                <tr><td><strong>2.2 kΩ</strong></td><td>Fast (400 kHz)</td><td>ต่ออุปกรณ์หลายตัว</td></tr>
+                                <tr><td><strong>1 kΩ</strong></td><td>Fast-mode Plus (1 MHz)</td><td>speed สูง / สายสั้น</td></tr>
+                            </tbody>
+                        </table>
+
+                        <p class="note">⚠️ <strong>ต่ำเกินไป</strong> (เช่น 100 Ω) → กินกระแสมาก วงจรร้อน &nbsp;|&nbsp; <strong>สูงเกินไป</strong> (เช่น 47 kΩ) → สัญญาณ rise time ช้า อาจ error ที่ speed สูง</p>
                     </div>
 
                     <p class="highlight">⚡ <strong>ข้อดี 2 สาย:</strong> ต่ออุปกรณ์ได้ถึง 128 ตัว (7-bit address) บนบัสเดียวกัน! ประหยัดขาของ MCU มาก</p>
@@ -592,10 +626,10 @@
             }
         }
     </script>
-    <script src="js/i2c-engine.js?v=1.0"></script>
-    <script src="js/animation.js?v=1.0"></script>
-    <script src="js/learning-mode.js?v=1.0"></script>
-    <script src="js/practice-mode.js?v=1.0"></script>
-    <script src="js/app.js?v=1.0"></script>
+    <script src="js/i2c-engine.js?v=2.0"></script>
+    <script src="js/animation.js?v=2.0"></script>
+    <script src="js/learning-mode.js?v=2.0"></script>
+    <script src="js/practice-mode.js?v=2.0"></script>
+    <script src="js/app.js?v=2.0"></script>
 </body>
 </html>
