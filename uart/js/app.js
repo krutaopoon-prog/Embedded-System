@@ -16,9 +16,7 @@ class App {
         document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
         target.classList.add('active');
 
-        // Theory section แสดงเฉพาะโหมดเรียนรู้
-        const theory = document.querySelector('.theory-section');
-        if (theory) theory.style.display = mode === 'learning-mode' ? '' : 'none';
+        document.body.dataset.mode = mode;
 
         this.currentMode = mode;
         history.pushState({ mode }, '', `#${mode}`);
@@ -42,9 +40,7 @@ class App {
         if (hash && valid.includes(hash)) {
             this.switchMode(hash);
         } else {
-            // default: learning-mode → theory section visible
-            const theory = document.querySelector('.theory-section');
-            if (theory) theory.style.display = '';
+            document.body.dataset.mode = 'learning-mode';
         }
     }
 }

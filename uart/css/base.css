@@ -92,6 +92,11 @@ main {
     display: block;
 }
 
+/* ซ่อน theory section เมื่ออยู่นอกโหมดเรียนรู้ */
+body[data-mode]:not([data-mode="learning-mode"]) .theory-section {
+    display: none;
+}
+
 /* ===== Buttons ===== */
 .btn-primary {
     background: var(--primary-color);
