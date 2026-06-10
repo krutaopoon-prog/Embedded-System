@@ -1,14 +1,10 @@
 class App {
     constructor() {
         this.currentMode = 'learning-mode';
-        this.init();
-    }
-
-    init() {
         this.setupModeSwitcher();
-        this.learningMode = new LearningMode();
-        this.practiceMode = new PracticeMode();
         this.restoreFromHash();
+        try { this.learningMode = new LearningMode(); } catch(e) { console.error('LearningMode:', e); }
+        try { this.practiceMode = new PracticeMode(); } catch(e) { console.error('PracticeMode:', e); }
     }
 
     switchMode(mode) {
