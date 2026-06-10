@@ -237,3 +237,199 @@
 .references a:hover {
     text-decoration: underline;
 }
+
+/* ===== ASCII Interactive ===== */
+.ascii-interactive {
+    margin-top: 1.5rem;
+    border-top: 2px dashed var(--border-color);
+    padding-top: 1.25rem;
+}
+
+.ascii-interactive h4 {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.ascii-char-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.ascii-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.ascii-group-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--border-color);
+    border-radius: 4px;
+    padding: 2px 6px;
+    min-width: 44px;
+    text-align: center;
+    align-self: center;
+}
+
+.ascii-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.ascii-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 42px;
+    padding: 4px 2px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--card-bg);
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    user-select: none;
+}
+
+.ascii-cell:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.ascii-cell.ascii-selected {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.35);
+}
+
+.ascii-cell-char {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.ascii-cell-code {
+    font-size: 0.6rem;
+    opacity: 0.75;
+}
+
+.ascii-converter {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+}
+
+.converter-display {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.converter-card {
+    flex: 1;
+    min-width: 90px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+}
+
+.conv-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.conv-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-family: 'Courier New', monospace;
+    min-height: 2rem;
+}
+
+.conv-bin-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    flex-wrap: nowrap;
+}
+
+.bit-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 28px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.bit-one  { background: #f97316; color: white; }
+.bit-zero { background: #94a3b8; color: white; }
+
+.converter-inputs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.conv-input-group {
+    flex: 1;
+    min-width: 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.conv-input-group label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.conv-input-group input {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-family: 'Courier New', monospace;
+    transition: border-color 0.15s;
+}
+
+.conv-input-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.btn-ascii-send {
+    width: 100%;
+    padding: 0.65rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-ascii-send:hover {
+    background: var(--primary-hover);
+}

@@ -136,6 +136,47 @@
                     </div>
 
                     <p class="highlight">💡 <strong>เชื่อมกับ UART:</strong> เวลากด "ส่ง A" ใน Simulator — UART ไม่ได้ส่งตัวอักษร 'A' โดยตรง แต่แปลง 'A' เป็น <strong>01000001</strong> แล้วส่งทีละบิตผ่านสาย TX</p>
+
+                    <!-- ASCII Interactive -->
+                    <div class="ascii-interactive">
+                        <h4>🎮 ทดลองแปลง ASCII แบบ Interactive — คลิกตัวอักษรหรือกรอกค่าเองได้เลย</h4>
+
+                        <div id="ascii-char-grid"></div>
+
+                        <div class="ascii-converter">
+                            <div class="converter-display">
+                                <div class="converter-card">
+                                    <div class="conv-label">ตัวอักษร</div>
+                                    <div class="conv-value" id="conv-char">A</div>
+                                </div>
+                                <div class="converter-card">
+                                    <div class="conv-label">Decimal</div>
+                                    <div class="conv-value" id="conv-dec">65</div>
+                                </div>
+                                <div class="converter-card" style="flex: 2; min-width: 200px;">
+                                    <div class="conv-label">Binary (8 bit)</div>
+                                    <div class="conv-value conv-bin-wrap" id="conv-bin"></div>
+                                </div>
+                            </div>
+
+                            <div class="converter-inputs">
+                                <div class="conv-input-group">
+                                    <label>พิมพ์ตัวอักษร</label>
+                                    <input type="text" id="ascii-input-char" maxlength="1" placeholder="A">
+                                </div>
+                                <div class="conv-input-group">
+                                    <label>กรอก Decimal (32–126)</label>
+                                    <input type="number" id="ascii-input-dec" min="32" max="126" placeholder="65">
+                                </div>
+                                <div class="conv-input-group">
+                                    <label>กรอก Binary (8 bit)</label>
+                                    <input type="text" id="ascii-input-bin" maxlength="8" placeholder="01000001">
+                                </div>
+                            </div>
+
+                            <button class="btn-ascii-send" id="btn-ascii-to-uart">📤 ส่งตัวอักษรนี้ผ่าน UART Simulator →</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Section 5: โครงสร้าง Data Frame -->
@@ -641,6 +682,7 @@
             }
         }
     </script>
+    <script src="js/ascii-interactive.js?v=1.0"></script>
     <script src="js/uart-engine.js?v=1.0"></script>
     <script src="js/animation.js?v=1.0"></script>
     <script src="js/learning-mode.js?v=1.0"></script>
