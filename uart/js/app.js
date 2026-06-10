@@ -16,6 +16,10 @@ class App {
         document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
         target.classList.add('active');
 
+        // Theory section แสดงเฉพาะโหมดเรียนรู้
+        const theory = document.querySelector('.theory-section');
+        if (theory) theory.style.display = mode === 'learning-mode' ? '' : 'none';
+
         this.currentMode = mode;
         history.pushState({ mode }, '', `#${mode}`);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -33,10 +37,14 @@ class App {
     }
 
     restoreFromHash() {
-        const hash = window.location.hash.replace('#', '');
+        const hash  = window.location.hash.replace('#', '');
         const valid = ['learning-mode', 'exercise-mode', 'practice-mode'];
         if (hash && valid.includes(hash)) {
             this.switchMode(hash);
+        } else {
+            // default: learning-mode → theory section visible
+            const theory = document.querySelector('.theory-section');
+            if (theory) theory.style.display = '';
         }
     }
 }
