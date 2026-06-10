@@ -1,42 +1,44 @@
-/**
- * App - Main entry point for I2C Simulator
- * Handles mode switching between Learning and Practice
- */
-
 class App {
     constructor() {
         this.currentMode = 'learning-mode';
-        this.learningMode = null;
-        this.practiceMode = null;
-        this.init();
+        this.setupModeSwitcher();
+        this.restoreFromHash();
+        try { this.learningMode = new LearningMode(); } catch(e) { console.error('LearningMode:', e); }
+        try { this.practiceMode = new PracticeMode(); } catch(e) { console.error('PracticeMode:', e); }
     }
 
-    init() {
-        this.setupModeSwitcher();
-        this.learningMode = new LearningMode();
-        this.practiceMode = new PracticeMode();
+    switchMode(mode) {
+        const target = document.getElementById(mode);
+        if (!target || mode === this.currentMode) return;
+
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+        document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+        target.classList.add('active');
+
+        document.body.dataset.mode = mode;
+        this.currentMode = mode;
+        history.pushState({ mode }, '', `#${mode}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     setupModeSwitcher() {
-        const buttons = document.querySelectorAll('.mode-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = btn.dataset.mode;
-                if (mode === this.currentMode) return;
-
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                document.querySelectorAll('.mode-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-
-                const targetSection = document.getElementById(mode);
-                if (targetSection) targetSection.classList.add('active');
-
-                this.currentMode = mode;
-            });
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.switchMode(btn.dataset.mode));
         });
+        window.addEventListener('popstate', (e) => {
+            const mode = (e.state && e.state.mode) || 'learning-mode';
+            this.switchMode(mode);
+        });
+    }
+
+    restoreFromHash() {
+        const hash  = window.location.hash.replace('#', '');
+        const valid = ['learning-mode', 'exercise-mode', 'practice-mode'];
+        if (hash && valid.includes(hash)) {
+            this.switchMode(hash);
+        } else {
+            document.body.dataset.mode = 'learning-mode';
+        }
     }
 }
 

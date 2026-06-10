@@ -7,9 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>I2C Simulator - จำลองการทำงาน I2C Protocol</title>
-    <link rel="stylesheet" href="css/base.css?v=2.0">
-    <link rel="stylesheet" href="css/theory.css?v=2.0">
-    <link rel="stylesheet" href="css/simulator.css?v=2.0">
+    <link rel="stylesheet" href="css/base.css?v=3.0">
+    <link rel="stylesheet" href="css/theory.css?v=3.0">
+    <link rel="stylesheet" href="css/simulator.css?v=3.0">
 </head>
 <body>
     <header>
@@ -18,6 +18,7 @@
             <p>จำลองการทำงานของ Inter-Integrated Circuit (I²C) สำหรับนักเรียน ปวส.</p>
             <div class="mode-switcher">
                 <button class="mode-btn active" data-mode="learning-mode">📚 โหมดเรียนรู้</button>
+                <button class="mode-btn" data-mode="exercise-mode">✏️ โหมดแบบฝึกหัด</button>
                 <button class="mode-btn" data-mode="practice-mode">📝 โหมดทดสอบ</button>
             </div>
         </div>
@@ -375,6 +376,69 @@
             </div>
         </section>
 
+        <!-- Exercise Mode -->
+        <section id="exercise-mode" class="mode-section">
+            <div class="ex-container">
+
+                <!-- Screen 1: Name Entry -->
+                <div class="ex-entry" id="ex-entry">
+                    <div class="ex-entry-card">
+                        <div class="name-entry-icon">✏️</div>
+                        <h2>แบบฝึกหัด I2C Protocol</h2>
+                        <p>ฝึกทักษะครอบคลุม 7 หัวข้อทฤษฎี: I2C คืออะไร, สายสัญญาณ, Master/Slave, Address, Data Frame, ACK/NACK, ขั้นตอนการสื่อสาร และการแปลง I2C Address เป็น Binary<br>ทำเสร็จรับ<strong>ใบส่งงาน PDF</strong> พร้อมส่งครู</p>
+                        <div class="ex-badges">
+                            <span class="ex-badge ex-b1">📊 10 ข้อ</span>
+                            <span class="ex-badge ex-b2">🎲 สุ่มคำถามทุกครั้ง</span>
+                            <span class="ex-badge ex-b3">🖨️ ปริ้น PDF ได้</span>
+                        </div>
+                        <div class="name-input-group">
+                            <label for="ex-student-name">กรอกชื่อ-นามสกุล:</label>
+                            <input type="text" id="ex-student-name" placeholder="เช่น สมชาย ใจดี" maxlength="60" autocomplete="off">
+                        </div>
+                        <button id="btn-ex-start" class="btn-primary btn-large" disabled>เริ่มทำแบบฝึกหัด →</button>
+                        <p class="name-hint">* กรุณากรอกชื่อก่อนเริ่มทำแบบฝึกหัด</p>
+                    </div>
+                </div>
+
+                <!-- Screen 2: Work Area -->
+                <div class="ex-work-area hidden" id="ex-work-area">
+                    <div class="ex-work-header">
+                        <h2>✏️ แบบฝึกหัด I2C Protocol</h2>
+                        <div class="ex-work-meta">
+                            <span class="ex-name-display" id="ex-name-display"></span>
+                            <div class="ex-progress-wrap">
+                                <span class="ex-progress-label">ความคืบหน้า:</span>
+                                <span id="ex-progress-text">0 / 10 ข้อ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ex-cards-container"></div>
+
+                    <button class="btn-primary ex-submit-btn" id="btn-ex-submit">✅ ตรวจคำตอบทั้งหมด</button>
+                </div>
+
+                <!-- Screen 3: Result -->
+                <div class="ex-result-screen hidden" id="ex-result-screen">
+                    <div class="ex-result-card">
+                        <div class="ex-result-trophy">🏆</div>
+                        <h2>ทำแบบฝึกหัดเสร็จแล้ว!</h2>
+                        <div class="ex-result-score">
+                            <div class="ex-score-num" id="ex-final-score">0/10</div>
+                            <div class="ex-score-grade" id="ex-grade-text"></div>
+                        </div>
+                        <div class="ex-result-btns">
+                            <button class="btn-secondary" id="btn-ex-retry">🔄 ทำใหม่</button>
+                            <button class="btn-primary btn-print" id="btn-ex-print">🖨️ ปริ้นใบส่งงาน PDF</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div id="print-area"></div>
+
         <!-- Practice Mode -->
         <section id="practice-mode" class="mode-section">
             <div class="practice-container">
@@ -626,10 +690,11 @@
             }
         }
     </script>
-    <script src="js/i2c-engine.js?v=2.0"></script>
-    <script src="js/animation.js?v=2.0"></script>
-    <script src="js/learning-mode.js?v=2.0"></script>
-    <script src="js/practice-mode.js?v=2.0"></script>
-    <script src="js/app.js?v=2.0"></script>
+    <script src="js/i2c-engine.js?v=3.0"></script>
+    <script src="js/animation.js?v=3.0"></script>
+    <script src="js/learning-mode.js?v=3.0"></script>
+    <script src="js/practice-mode.js?v=3.0"></script>
+    <script src="js/exercises.js?v=3.0"></script>
+    <script src="js/app.js?v=3.0"></script>
 </body>
 </html>
