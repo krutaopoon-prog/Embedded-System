@@ -12,8 +12,9 @@ class UARTAnimation {
     }
 
     resize() {
-        const rect = this.canvas.parentElement.getBoundingClientRect();
-        this.canvas.width = Math.min(800, rect.width - 40);
+        // Match canvas buffer to CSS display width to prevent stretching
+        const displayW = this.canvas.offsetWidth;
+        this.canvas.width  = displayW > 0 ? displayW : Math.min(800, this.canvas.parentElement.offsetWidth - 40);
         this.canvas.height = 200;
     }
 
